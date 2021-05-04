@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>api.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #ee7762;}
+.s1 { color: #f5f0e6;}
+.s2 { color: #57d1eb;}
+.s3 { color: #78dce8;}
+.s4 { color: #a97cf8;}
+.s5 { color: #fd971f;}
+.s6 { color: #ffd866;}
+.s7 { color: #92d923;}
+.s8 { color: #ffc83c;}
+</style>
+</head>
+<body bgcolor="#191919">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+api.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">requests</span>
+
+
+<span class="s0">import </span><span class="s1">pdb</span>
+
+
+<span class="s0">def </span><span class="s1">connect</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">user_id</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'id'</span><span class="s4">: </span><span class="s1">user_id</span><span class="s3">,</span><span class="s6">'password'</span><span class="s4">: </span><span class="s6">'qqqq'</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{}</span>
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/auth/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">get_game_list</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">token</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s5">{}</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/list/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">create_game</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_cost</span><span class="s3">, </span><span class="s1">token </span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'game_cost'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">game_cost</span><span class="s2">) </span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/create/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">resume_game</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_pk</span><span class="s3">, </span><span class="s1">token</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'game_pk'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">game_pk</span><span class="s2">)</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/join/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">insert_credit</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_pk</span><span class="s3">, </span><span class="s1">credit</span><span class="s3">, </span><span class="s1">token</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'credit'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">credit</span><span class="s2">)</span><span class="s3">, </span><span class="s6">'game_pk'</span><span class="s4">: </span><span class="s1">game_pk</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/insert_credit/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">spend_coin</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_pk</span><span class="s3">, </span><span class="s1">token</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'game_pk'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">game_pk</span><span class="s2">)</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/spend_coin/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">coin_result</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_pk</span><span class="s3">, </span><span class="s1">result</span><span class="s3">, </span><span class="s1">token</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'game_pk'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">game_pk</span><span class="s2">)</span><span class="s3">, </span><span class="s6">'result'</span><span class="s4">: </span><span class="s1">result</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/coin_result/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">begin_spin</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_pk</span><span class="s3">, </span><span class="s1">token</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'game_pk'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">game_pk</span><span class="s2">)</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/begin_spin/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">end_spin</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_pk</span><span class="s3">, </span><span class="s1">prize</span><span class="s3">, </span><span class="s1">token </span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'game_pk'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">game_pk</span><span class="s2">)</span><span class="s3">, </span><span class="s6">'prize'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">prize</span><span class="s2">)</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/end_spin/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+<span class="s0">def </span><span class="s1">close_game</span><span class="s2">(</span><span class="s1">url</span><span class="s3">, </span><span class="s1">game_pk</span><span class="s3">, </span><span class="s1">token</span><span class="s2">)</span><span class="s4">:</span>
+    <span class="s1">payload </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'game_pk'</span><span class="s4">: </span><span class="s1">str</span><span class="s2">(</span><span class="s1">game_pk</span><span class="s2">)</span><span class="s5">}</span>
+    <span class="s1">files </span><span class="s4">= </span><span class="s7">[]</span>
+    <span class="s1">headers </span><span class="s4">= </span><span class="s5">{</span><span class="s6">'Authorization'</span><span class="s4">: </span><span class="s6">'Token ' </span><span class="s4">+ </span><span class="s1">token</span><span class="s5">}</span>
+
+    <span class="s1">response </span><span class="s4">= </span><span class="s1">requests</span><span class="s8">.</span><span class="s1">request</span><span class="s2">(</span><span class="s6">&quot;POST&quot;</span><span class="s3">, </span><span class="s1">url </span><span class="s4">+ </span><span class="s6">'/API/game/close/'</span><span class="s3">, </span><span class="s1">headers</span><span class="s4">=</span><span class="s1">headers</span><span class="s3">, </span><span class="s1">data</span><span class="s4">=</span><span class="s1">payload</span><span class="s3">, </span><span class="s1">files</span><span class="s4">=</span><span class="s1">files</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">response</span>
+
+
+
+
+</pre>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>main.spec</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #f5f0e6;}
+</style>
+</head>
+<body bgcolor="#191919">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.spec</font>
+</center></td></tr></table>
+<pre><span class="s0"># -*- mode: python ; coding: utf-8 -*-</span>
+
+<span class="s0">block_cipher = None</span>
+
+
+<span class="s0">a = Analysis(['main.py'],</span>
+             <span class="s0">pathex=['D:\\Work\\Python\\Titan\\DummyClient'],</span>
+             <span class="s0">binaries=[],</span>
+             <span class="s0">datas=[],</span>
+             <span class="s0">hiddenimports=[],</span>
+             <span class="s0">hookspath=[],</span>
+             <span class="s0">runtime_hooks=[],</span>
+             <span class="s0">excludes=[],</span>
+             <span class="s0">win_no_prefer_redirects=False,</span>
+             <span class="s0">win_private_assemblies=False,</span>
+             <span class="s0">cipher=block_cipher,</span>
+             <span class="s0">noarchive=False)</span>
+<span class="s0">pyz = PYZ(a.pure, a.zipped_data,</span>
+             <span class="s0">cipher=block_cipher)</span>
+<span class="s0">exe = EXE(pyz,</span>
+          <span class="s0">a.scripts,</span>
+          <span class="s0">a.binaries,</span>
+          <span class="s0">a.zipfiles,</span>
+          <span class="s0">a.datas,</span>
+          <span class="s0">[],</span>
+          <span class="s0">name='main',</span>
+          <span class="s0">debug=False,</span>
+          <span class="s0">bootloader_ignore_signals=False,</span>
+          <span class="s0">strip=False,</span>
+          <span class="s0">upx=True,</span>
+          <span class="s0">upx_exclude=[],</span>
+          <span class="s0">runtime_tmpdir=None,</span>
+          <span class="s0">console=False )</span>
+</pre>
+</body>
+</html>

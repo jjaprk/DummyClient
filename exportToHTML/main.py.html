@@ -1,0 +1,493 @@
+<html>
+<head>
+<title>main.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #ee7762;}
+.s1 { color: #f5f0e6;}
+.s2 { color: #a97cf8;}
+.s3 { color: #57d1eb;}
+.s4 { color: #ffc83c;}
+.s5 { color: #ffd866;}
+.s6 { color: #78dce8;}
+.s7 { color: #0078d7;}
+.s8 { color: #808080;}
+.s9 { color: #92d923;}
+.s10 { color: #fd971f;}
+</style>
+</head>
+<body bgcolor="#191919">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">tkinter </span><span class="s0">import </span><span class="s2">*</span>
+<span class="s0">from </span><span class="s1">tkinter </span><span class="s0">import </span><span class="s1">messagebox</span>
+
+<span class="s0">import </span><span class="s1">api</span>
+<span class="s0">import </span><span class="s1">json</span>
+<span class="s0">import </span><span class="s1">random</span>
+<span class="s0">import </span><span class="s1">pdb</span>
+
+<span class="s1">root </span><span class="s2">= </span><span class="s1">Tk</span><span class="s3">()</span>
+<span class="s1">root</span><span class="s4">.</span><span class="s1">title</span><span class="s3">(</span><span class="s5">'ss dummy client'</span><span class="s3">)</span>
+<span class="s1">root</span><span class="s4">.</span><span class="s1">geometry</span><span class="s3">(</span><span class="s5">'640x640'</span><span class="s3">)</span>
+<span class="s1">root</span><span class="s4">.</span><span class="s1">resizable</span><span class="s3">(</span><span class="s0">False</span><span class="s6">, </span><span class="s0">False</span><span class="s3">)</span>
+
+<span class="s1">target_url </span><span class="s2">= </span><span class="s5">''</span>
+<span class="s1">user_token </span><span class="s2">= </span><span class="s5">''</span>
+<span class="s1">user_credit </span><span class="s2">= </span><span class="s7">0</span>
+
+<span class="s1">game_coin </span><span class="s2">= </span><span class="s7">0</span>
+<span class="s1">game_point </span><span class="s2">= </span><span class="s7">0</span>
+<span class="s1">game_spin </span><span class="s2">= </span><span class="s7">0</span>
+
+<span class="s1">active_game_pk </span><span class="s2">= </span><span class="s7">0</span>
+
+<span class="s8"># 0 : 대기 / 1 : 돌아감</span>
+<span class="s1">game_coin_state </span><span class="s2">= </span><span class="s7">0</span>
+
+<span class="s8"># 0 : 대기 / 1 : 돌아감</span>
+<span class="s1">game_spin_state </span><span class="s2">= </span><span class="s7">0</span>
+
+<span class="s8"># 0 : 대기 / 1 : 돌아감</span>
+<span class="s1">game_next_prize </span><span class="s2">= </span><span class="s7">0</span>
+
+
+<span class="s1">game_speed </span><span class="s2">= </span><span class="s7">10</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_connect</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s0">global </span><span class="s1">target_url</span>
+    <span class="s1">target_url </span><span class="s2">= </span><span class="s1">url_entry</span><span class="s4">.</span><span class="s1">get</span><span class="s3">()</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">connect</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">entry_ID</span><span class="s4">.</span><span class="s1">get</span><span class="s3">() )</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">global </span><span class="s1">user_token</span>
+    <span class="s1">user_token </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'token'</span><span class="s9">]</span>
+
+    <span class="s0">global </span><span class="s1">user_credit</span>
+    <span class="s1">user_credit </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'credit'</span><span class="s9">]</span>
+
+    <span class="s1">entry_ID</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'disabled'</span>
+    <span class="s1">label_Credit</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'credit : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">user_credit</span><span class="s3">)</span>
+    <span class="s1">btn_connect</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'disabled'</span>
+    <span class="s1">url_entry</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">]   </span><span class="s2">= </span><span class="s5">'disabled'</span>
+    <span class="s1">gamenumber_entry</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'normal'</span>
+
+    <span class="s1">refresh_gamelist</span><span class="s3">()</span>
+
+
+<span class="s0">def </span><span class="s1">refresh_gamelist</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">get_game_list</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">user_token</span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s1">games_dict </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'games'</span><span class="s9">]</span>
+
+        <span class="s1">list_Games</span><span class="s4">.</span><span class="s1">delete</span><span class="s3">(</span><span class="s7">0</span><span class="s6">, </span><span class="s1">END</span><span class="s3">)</span>
+
+        <span class="s0">if </span><span class="s1">len</span><span class="s3">(</span><span class="s1">games_dict</span><span class="s3">) </span><span class="s2">&gt; </span><span class="s7">0</span><span class="s2">:</span>
+            <span class="s0">for </span><span class="s1">key</span><span class="s6">, </span><span class="s1">val </span><span class="s0">in </span><span class="s1">games_dict</span><span class="s4">.</span><span class="s1">items</span><span class="s3">()</span><span class="s2">:</span>
+                <span class="s1">list_Games</span><span class="s4">.</span><span class="s1">insert</span><span class="s3">(</span><span class="s1">END</span><span class="s6">, </span><span class="s1">val</span><span class="s3">)</span>
+        <span class="s0">else</span><span class="s2">:</span>
+            <span class="s1">list_Games</span><span class="s4">.</span><span class="s1">insert</span><span class="s3">(</span><span class="s7">0</span><span class="s6">, </span><span class="s5">'진행중인 게임이 없습니다'</span><span class="s3">)</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_create_game</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">create_game</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s7">100</span><span class="s6">, </span><span class="s1">user_token</span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s8"># new_game_dict = { 'pk': res_dict['pk'], 'coin': res_dict['coin'], 'point': res_dict['point']}</span>
+        <span class="s1">refresh_gamelist</span><span class="s3">()</span>
+
+        <span class="s8"># global user_credit</span>
+        <span class="s8"># user_credit -= 10000</span>
+        <span class="s8"># label_Credit['text'] = 'credit : ' + str(user_credit)</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_insert_credit</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">game_pk </span><span class="s2">= </span><span class="s1">gamenumber_entry</span><span class="s4">.</span><span class="s1">get</span><span class="s3">()</span>
+    <span class="s1">credit </span><span class="s2">= </span><span class="s7">10000</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">insert_credit</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">game_pk</span><span class="s6">, </span><span class="s1">credit</span><span class="s6">, </span><span class="s1">user_token</span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">user_credit</span><span class="s6">, </span><span class="s1">game_coin</span>
+        <span class="s1">user_credit </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'user_credit'</span><span class="s9">]</span>
+        <span class="s1">game_coin </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'game_coin'</span><span class="s9">]</span>
+
+        <span class="s1">label_Credit</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'credit : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">user_credit</span><span class="s3">)</span>
+        <span class="s1">label_game_coin</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'coin : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_coin</span><span class="s3">)</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_resume_game</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s0">global </span><span class="s1">active_game_pk</span>
+    <span class="s1">active_game_pk </span><span class="s2">= </span><span class="s1">gamenumber_entry</span><span class="s4">.</span><span class="s1">get</span><span class="s3">()</span>
+
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">resume_game</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">active_game_pk</span><span class="s6">, </span><span class="s1">user_token</span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">game_coin</span><span class="s6">, </span><span class="s1">game_point</span><span class="s6">, </span><span class="s1">game_spin</span>
+        <span class="s1">game_coin   </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'coin'</span><span class="s9">]</span>
+        <span class="s1">game_point  </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'point'</span><span class="s9">]</span>
+        <span class="s1">game_spin   </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'spin_count'</span><span class="s9">]</span>
+
+        <span class="s1">label_game_coin</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'coin : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_coin</span><span class="s3">)</span>
+        <span class="s1">label_game_point</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'point : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_point</span><span class="s3">)</span>
+        <span class="s1">label_game_spin</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'spin : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_spin</span><span class="s3">)</span>
+
+        <span class="s1">gamenumber_entry</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'disabled'</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_begin_game</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s0">global </span><span class="s1">game_coin_state</span>
+
+    <span class="s0">if </span><span class="s1">game_coin </span><span class="s2">&gt; </span><span class="s7">0</span><span class="s2">:</span>
+        <span class="s1">game_coin_state </span><span class="s2">= </span><span class="s7">1</span>
+        <span class="s1">btn_begin_game</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'disabled'</span>
+        <span class="s1">btn_stop_game</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'normal'</span>
+        <span class="s1">game_process_coin</span><span class="s3">()</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_stop_game</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s0">global </span><span class="s1">game_coin_state</span>
+    <span class="s1">game_coin_state </span><span class="s2">= </span><span class="s7">0</span>
+    <span class="s1">btn_begin_game</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'normal'</span>
+    <span class="s1">btn_stop_game</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'disabled'</span>
+
+
+<span class="s0">def </span><span class="s1">game_process_coin</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">spend_coin</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">active_game_pk</span><span class="s6">, </span><span class="s1">user_token</span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">game_coin</span><span class="s6">, </span><span class="s1">game_coin_state</span>
+        <span class="s1">game_coin </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'game_coin'</span><span class="s9">]</span>
+        <span class="s1">label_game_coin</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'coin : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_coin</span><span class="s3">)</span>
+
+        <span class="s0">if </span><span class="s1">game_coin_state </span><span class="s2">== </span><span class="s7">1</span><span class="s2">:</span>
+            <span class="s0">if </span><span class="s1">game_coin </span><span class="s2">&gt; </span><span class="s7">0</span><span class="s2">:</span>
+                <span class="s1">root</span><span class="s4">.</span><span class="s1">after</span><span class="s3">(</span><span class="s7">40 </span><span class="s2">* </span><span class="s1">game_speed</span><span class="s6">, </span><span class="s1">game_process_coin</span><span class="s3">)</span>
+                <span class="s1">root</span><span class="s4">.</span><span class="s1">after</span><span class="s3">(</span><span class="s7">35 </span><span class="s2">* </span><span class="s1">game_speed</span><span class="s6">, </span><span class="s1">game_process_coin_result</span><span class="s3">)</span>
+            <span class="s0">else</span><span class="s2">:</span>
+                <span class="s1">game_coin_state </span><span class="s2">= </span><span class="s7">0</span>
+
+
+<span class="s0">def </span><span class="s1">game_process_coin_result</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">result_list </span><span class="s2">= </span><span class="s9">[</span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">,  </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">,  </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'gage'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_2'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'gage'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_2'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'gage'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_2'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'gage'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_2'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_1'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">,</span>
+                   <span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'none'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'gage'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'spin'</span><span class="s6">, </span><span class="s5">'point_3'</span><span class="s6">,</span><span class="s9">]</span>
+
+    <span class="s1">result </span><span class="s2">= </span><span class="s1">random</span><span class="s4">.</span><span class="s1">choice</span><span class="s3">(</span><span class="s1">result_list</span><span class="s3">)</span>
+
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">coin_result</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">active_game_pk</span><span class="s6">, </span><span class="s1">result</span><span class="s6">, </span><span class="s1">user_token </span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">game_point</span><span class="s6">, </span><span class="s1">game_spin</span>
+        <span class="s1">game_point  </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'point'</span><span class="s9">]</span>
+        <span class="s1">game_spin   </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'spin_count'</span><span class="s9">]</span>
+
+        <span class="s1">label_game_point</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'point : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_point</span><span class="s3">)</span>
+        <span class="s1">label_game_spin</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'spin : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_spin</span><span class="s3">)</span>
+
+        <span class="s1">put_coin_log</span><span class="s3">(</span><span class="s1">result</span><span class="s3">)</span>
+
+
+<span class="s0">def </span><span class="s1">begin_spin_watch_thread</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s0">if </span><span class="s1">game_spin_state </span><span class="s2">== </span><span class="s7">0 </span><span class="s2">:</span>
+        <span class="s0">if </span><span class="s1">game_spin </span><span class="s2">&gt; </span><span class="s7">0</span><span class="s2">:</span>
+            <span class="s1">game_process_begin_spin</span><span class="s3">()</span>
+
+    <span class="s1">root</span><span class="s4">.</span><span class="s1">after</span><span class="s3">(</span><span class="s7">10</span><span class="s2">* </span><span class="s1">game_speed</span><span class="s6">,</span><span class="s1">begin_spin_watch_thread</span><span class="s3">)</span>
+
+
+<span class="s0">def </span><span class="s1">game_process_begin_spin</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">begin_spin</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">active_game_pk</span><span class="s6">, </span><span class="s1">user_token </span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">game_next_prize</span><span class="s6">, </span><span class="s1">game_spin</span>
+        <span class="s1">game_next_prize </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'prize'</span><span class="s9">]</span>
+        <span class="s1">game_spin </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'spin_count'</span><span class="s9">]</span>
+        <span class="s1">label_game_spin</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'spin : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_spin</span><span class="s3">)</span>
+
+        <span class="s0">global </span><span class="s1">game_spin_state</span>
+        <span class="s1">game_spin_state </span><span class="s2">= </span><span class="s7">1</span>
+        <span class="s1">label_spin_state</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'릴 상태 : 스핀'</span>
+        <span class="s1">root</span><span class="s4">.</span><span class="s1">after</span><span class="s3">(</span><span class="s7">50 </span><span class="s2">* </span><span class="s1">game_speed</span><span class="s6">, </span><span class="s1">game_process_end_spin</span><span class="s3">)</span>
+
+        <span class="s8"># print(res_dict)</span>
+
+
+<span class="s0">def </span><span class="s1">game_process_end_spin</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">end_spin</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">,</span><span class="s1">active_game_pk</span><span class="s6">,</span><span class="s1">game_next_prize</span><span class="s6">, </span><span class="s1">user_token</span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">game_point</span>
+        <span class="s1">game_point  </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'point'</span><span class="s9">]</span>
+        <span class="s1">label_game_point</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'point : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_point</span><span class="s3">)</span>
+
+        <span class="s0">global </span><span class="s1">game_spin_state</span>
+        <span class="s1">game_spin_state </span><span class="s2">= </span><span class="s7">0</span>
+        <span class="s1">label_spin_state</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'릴 상태 : 대기'</span>
+
+        <span class="s1">put_spin_log</span><span class="s3">( </span><span class="s1">str</span><span class="s3">(</span><span class="s1">game_next_prize</span><span class="s3">) )</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_close_game</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">response </span><span class="s2">= </span><span class="s1">api</span><span class="s4">.</span><span class="s1">close_game</span><span class="s3">(</span><span class="s1">target_url</span><span class="s6">, </span><span class="s1">active_game_pk</span><span class="s6">, </span><span class="s1">user_token</span><span class="s3">)</span>
+    <span class="s1">res_dict </span><span class="s2">= </span><span class="s1">json</span><span class="s4">.</span><span class="s1">loads</span><span class="s3">(</span><span class="s1">response</span><span class="s4">.</span><span class="s1">text</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'result'</span><span class="s9">] </span><span class="s2">== </span><span class="s5">'success'</span><span class="s2">:</span>
+        <span class="s0">global </span><span class="s1">user_credit</span>
+        <span class="s1">user_credit </span><span class="s2">= </span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'user_credit'</span><span class="s9">]</span>
+        <span class="s1">label_Credit</span><span class="s9">[</span><span class="s5">'text'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'credit : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">user_credit</span><span class="s3">)</span>
+
+        <span class="s1">gamenumber_entry</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'normal'</span>
+        <span class="s1">messagebox</span><span class="s4">.</span><span class="s1">showinfo</span><span class="s3">(</span><span class="s5">'titan'</span><span class="s6">, </span><span class="s5">'game winlose : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">res_dict</span><span class="s9">[</span><span class="s5">'game_winlose'</span><span class="s9">]</span><span class="s3">) )</span>
+        <span class="s1">refresh_gamelist</span><span class="s3">()</span>
+
+
+<span class="s0">def </span><span class="s1">put_coin_log</span><span class="s3">(</span><span class="s1">log</span><span class="s3">)</span><span class="s2">:</span>
+    <span class="s0">if </span><span class="s1">list_coin_log</span><span class="s4">.</span><span class="s1">size</span><span class="s3">() </span><span class="s2">&gt; </span><span class="s7">30</span><span class="s2">:</span>
+        <span class="s1">list_coin_log</span><span class="s4">.</span><span class="s1">delete</span><span class="s3">(</span><span class="s7">0</span><span class="s6">, </span><span class="s1">END</span><span class="s3">)</span>
+
+    <span class="s1">list_coin_log</span><span class="s4">.</span><span class="s1">insert</span><span class="s3">(</span><span class="s7">0</span><span class="s6">, </span><span class="s1">log</span><span class="s3">)</span>
+
+
+<span class="s0">def </span><span class="s1">put_spin_log</span><span class="s3">(</span><span class="s1">log</span><span class="s3">)</span><span class="s2">:</span>
+    <span class="s0">if </span><span class="s1">list_spin_log</span><span class="s4">.</span><span class="s1">size</span><span class="s3">() </span><span class="s2">&gt; </span><span class="s7">30</span><span class="s2">:</span>
+        <span class="s1">list_spin_log</span><span class="s4">.</span><span class="s1">delete</span><span class="s3">(</span><span class="s7">0</span><span class="s6">,</span><span class="s1">END</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">log </span><span class="s2">!= </span><span class="s5">'0'</span><span class="s2">:</span>
+        <span class="s1">list_spin_log</span><span class="s4">.</span><span class="s1">insert</span><span class="s3">(</span><span class="s7">0</span><span class="s6">,</span><span class="s1">log</span><span class="s3">)</span>
+
+
+<span class="s8"># UI</span>
+<span class="s1">url_entry </span><span class="s2">= </span><span class="s1">Entry</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">30</span><span class="s3">)</span>
+<span class="s1">url_entry</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">10</span><span class="s3">)</span>
+<span class="s8"># url_entry.insert(0,&quot;http://titan-admin-eb-env.eba-yyfhid9w.ap-northeast-2.elasticbeanstalk.com&quot;)</span>
+<span class="s1">url_entry</span><span class="s4">.</span><span class="s1">insert</span><span class="s3">(</span><span class="s7">0</span><span class="s6">,</span><span class="s5">&quot;http://127.0.0.1:8000&quot;</span><span class="s3">)</span>
+
+<span class="s1">label_ID </span><span class="s2">= </span><span class="s1">Label</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;ID &quot;</span><span class="s3">)</span>
+<span class="s1">label_ID</span><span class="s4">.</span><span class="s1">place</span><span class="s3">( </span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">38</span><span class="s3">)</span>
+<span class="s1">entry_ID </span><span class="s2">= </span><span class="s1">Entry</span><span class="s3">(</span><span class="s1">root</span><span class="s6">,</span><span class="s1">width</span><span class="s2">=</span><span class="s7">20</span><span class="s3">)</span>
+<span class="s1">entry_ID</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">30</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">38</span><span class="s3">)</span>
+
+<span class="s1">btn_connect </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;connect&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_connect </span><span class="s3">)</span>
+<span class="s1">btn_connect</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">220</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">35</span><span class="s3">)</span>
+
+
+<span class="s1">frame_game_list </span><span class="s2">= </span><span class="s1">Frame</span><span class="s3">(</span><span class="s1">root</span><span class="s3">)</span>
+<span class="s1">scrollbar_game_list </span><span class="s2">= </span><span class="s1">Scrollbar</span><span class="s3">(</span><span class="s1">frame_game_list</span><span class="s3">)</span>
+<span class="s1">scrollbar_game_list</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">(</span><span class="s1">side</span><span class="s2">=</span><span class="s5">'right'</span><span class="s6">, </span><span class="s1">fill</span><span class="s2">=</span><span class="s5">'y'</span><span class="s3">)</span>
+<span class="s1">list_Games </span><span class="s2">= </span><span class="s1">Listbox</span><span class="s3">(</span><span class="s1">frame_game_list</span><span class="s6">, </span><span class="s1">selectmode</span><span class="s2">=</span><span class="s5">'browse'</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">40</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">5</span><span class="s6">, </span><span class="s1">yscrollcommand</span><span class="s2">= </span><span class="s1">scrollbar_game_list</span><span class="s4">.</span><span class="s1">set</span><span class="s3">)</span>
+<span class="s1">list_Games</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">(</span><span class="s1">side</span><span class="s2">=</span><span class="s5">'left'</span><span class="s3">)</span>
+<span class="s1">scrollbar_game_list</span><span class="s9">[</span><span class="s5">'command'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">list_Games</span><span class="s4">.</span><span class="s1">yview</span>
+<span class="s1">frame_game_list</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">70</span><span class="s3">)</span>
+
+<span class="s1">btn_refresh_game_list </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;리스트갱신&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">refresh_gamelist </span><span class="s3">)</span>
+<span class="s1">btn_refresh_game_list</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">160</span><span class="s3">)</span>
+
+<span class="s1">btn_create_game </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;게임만들기&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_create_game </span><span class="s3">)</span>
+<span class="s1">btn_create_game</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">100</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">160</span><span class="s3">)</span>
+
+
+<span class="s1">gamenumber_entry </span><span class="s2">= </span><span class="s1">Entry</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">3</span><span class="s3">)</span>
+<span class="s1">gamenumber_entry</span><span class="s9">[</span><span class="s5">'state'</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'disabled'</span>
+<span class="s1">gamenumber_entry</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">190</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">164</span><span class="s3">)</span>
+
+
+<span class="s1">btn_resueme_game </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;게임참가&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_resume_game </span><span class="s3">)</span>
+<span class="s1">btn_resueme_game</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">220</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">160</span><span class="s3">)</span>
+
+
+<span class="s1">label_Credit </span><span class="s2">= </span><span class="s1">Label</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">'Credit : '</span><span class="s3">)</span>
+<span class="s1">label_Credit</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">203</span><span class="s3">)</span>
+
+<span class="s1">btn_insert_credit </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;크레딧 투입&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_insert_credit </span><span class="s3">)</span>
+<span class="s1">btn_insert_credit</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">120</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">200</span><span class="s3">)</span>
+
+<span class="s1">btn_begin_game </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;게임시작&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_begin_game </span><span class="s3">)</span>
+<span class="s1">btn_begin_game</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">240</span><span class="s3">)</span>
+
+<span class="s1">btn_stop_game </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;게임 정지&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_stop_game</span><span class="s6">, </span><span class="s1">state</span><span class="s2">=</span><span class="s5">'disabled' </span><span class="s3">)</span>
+<span class="s1">btn_stop_game</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">100</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">240</span><span class="s3">)</span>
+
+
+<span class="s1">label_game_coin </span><span class="s2">= </span><span class="s1">Label</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">'coin : '</span><span class="s3">)</span>
+<span class="s1">label_game_coin</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">280</span><span class="s3">)</span>
+<span class="s1">label_game_point </span><span class="s2">= </span><span class="s1">Label</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">'point : '</span><span class="s3">)</span>
+<span class="s1">label_game_point</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">120</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">280</span><span class="s3">)</span>
+<span class="s1">label_game_spin </span><span class="s2">= </span><span class="s1">Label</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">'spin : '</span><span class="s3">)</span>
+<span class="s1">label_game_spin</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">240</span><span class="s6">,</span><span class="s1">y</span><span class="s2">=</span><span class="s7">280</span><span class="s3">)</span>
+
+
+<span class="s1">frame_coin_log </span><span class="s2">= </span><span class="s1">Frame</span><span class="s3">(</span><span class="s1">root</span><span class="s3">)</span>
+<span class="s1">scrollbar_coin_log </span><span class="s2">= </span><span class="s1">Scrollbar</span><span class="s3">(</span><span class="s1">frame_coin_log</span><span class="s3">)</span>
+<span class="s1">scrollbar_coin_log</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">(</span><span class="s1">side</span><span class="s2">=</span><span class="s5">'right'</span><span class="s6">, </span><span class="s1">fill</span><span class="s2">=</span><span class="s5">'y'</span><span class="s3">)</span>
+<span class="s1">list_coin_log </span><span class="s2">= </span><span class="s1">Listbox</span><span class="s3">(</span><span class="s1">frame_coin_log</span><span class="s6">, </span><span class="s1">selectmode</span><span class="s2">=</span><span class="s5">'browse'</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">18</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">15</span><span class="s6">, </span><span class="s1">yscrollcommand </span><span class="s2">= </span><span class="s1">scrollbar_coin_log</span><span class="s4">.</span><span class="s1">set</span><span class="s3">)</span>
+<span class="s1">list_coin_log</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">( </span><span class="s1">side</span><span class="s2">=</span><span class="s5">'left'</span><span class="s3">)</span>
+<span class="s1">scrollbar_coin_log</span><span class="s9">[</span><span class="s5">'command'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">list_coin_log</span><span class="s4">.</span><span class="s1">yview</span>
+<span class="s1">frame_coin_log</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">10</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">320</span><span class="s3">)</span>
+
+<span class="s1">frame_spin_log </span><span class="s2">= </span><span class="s1">Frame</span><span class="s3">(</span><span class="s1">root</span><span class="s3">)</span>
+<span class="s1">scrollbar_spin_log </span><span class="s2">= </span><span class="s1">Scrollbar</span><span class="s3">(</span><span class="s1">frame_spin_log</span><span class="s3">)</span>
+<span class="s1">scrollbar_spin_log</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">(</span><span class="s1">side</span><span class="s2">=</span><span class="s5">'right'</span><span class="s6">, </span><span class="s1">fill</span><span class="s2">=</span><span class="s5">'y'</span><span class="s3">)</span>
+<span class="s1">list_spin_log </span><span class="s2">= </span><span class="s1">Listbox</span><span class="s3">(</span><span class="s1">frame_spin_log</span><span class="s6">, </span><span class="s1">selectmode</span><span class="s2">=</span><span class="s5">'browse'</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">18</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">15</span><span class="s6">, </span><span class="s1">yscrollcommand </span><span class="s2">= </span><span class="s1">scrollbar_spin_log</span><span class="s4">.</span><span class="s1">set</span><span class="s3">)</span>
+<span class="s1">list_spin_log</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">( </span><span class="s1">side</span><span class="s2">=</span><span class="s5">'left'</span><span class="s3">)</span>
+<span class="s1">scrollbar_spin_log</span><span class="s9">[</span><span class="s5">'command'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">list_spin_log</span><span class="s4">.</span><span class="s1">yview</span>
+<span class="s1">frame_spin_log</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">160</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">320</span><span class="s3">)</span>
+
+<span class="s1">label_spin_state </span><span class="s2">= </span><span class="s1">Label</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">'릴상태 : '</span><span class="s3">)</span>
+<span class="s1">label_spin_state</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">180</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">565</span><span class="s3">)</span>
+
+<span class="s1">btn_close_game </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">40</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;게임종료&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_close_game </span><span class="s3">)</span>
+<span class="s1">btn_close_game</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">20</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">600</span><span class="s3">)</span>
+
+<span class="s5">''' 
+# scenario test 
+'''</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_test_prize</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">build_effect_scenario</span><span class="s3">()</span>
+
+
+<span class="s0">def </span><span class="s1">build_prize_scenario</span><span class="s3">( </span><span class="s1">target_prize </span><span class="s3">)</span><span class="s2">:</span>
+    <span class="s1">prize_scenario </span><span class="s2">= </span><span class="s1">dict</span><span class="s3">()</span>
+    <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s5">'active'</span><span class="s9">] </span><span class="s2">= </span><span class="s0">True</span>
+    <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s5">'count'</span><span class="s9">] </span><span class="s2">= </span><span class="s7">0</span>
+    <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s5">'offset'</span><span class="s9">] </span><span class="s2">= </span><span class="s7">0</span>
+    <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s5">'total_prize'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">target_prize</span>
+    <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s5">'remain_prize'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">target_prize</span>
+
+    <span class="s1">remain_prize </span><span class="s2">= </span><span class="s1">target_prize</span>
+
+    <span class="s1">usable_prize_table </span><span class="s2">= </span><span class="s9">[</span><span class="s7">0</span><span class="s6">, </span><span class="s7">5000</span><span class="s6">, </span><span class="s7">0</span><span class="s6">, </span><span class="s7">10000</span><span class="s6">, </span><span class="s7">0</span><span class="s6">, </span><span class="s7">20000</span><span class="s9">]</span>
+    <span class="s1">index </span><span class="s2">= </span><span class="s7">0</span>
+
+    <span class="s0">while </span><span class="s1">remain_prize </span><span class="s2">&gt; </span><span class="s7">0</span><span class="s2">:</span>
+        <span class="s1">prize </span><span class="s2">= </span><span class="s1">random</span><span class="s4">.</span><span class="s1">choice</span><span class="s3">(</span><span class="s1">usable_prize_table</span><span class="s3">)</span>
+
+        <span class="s0">if </span><span class="s1">prize </span><span class="s2">!= </span><span class="s7">0 </span><span class="s0">and </span><span class="s1">prize </span><span class="s2">&lt;= </span><span class="s1">remain_prize</span><span class="s2">:</span>
+            <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s1">str</span><span class="s3">(</span><span class="s1">index</span><span class="s3">)</span><span class="s9">] </span><span class="s2">= </span><span class="s1">prize</span>
+            <span class="s1">remain_prize </span><span class="s2">-= </span><span class="s1">prize</span>
+
+        <span class="s1">index </span><span class="s2">+= </span><span class="s7">1</span>
+
+    <span class="s1">index </span><span class="s2">+= </span><span class="s1">random</span><span class="s4">.</span><span class="s1">randrange</span><span class="s3">(</span><span class="s7">3</span><span class="s6">,</span><span class="s7">10</span><span class="s3">)</span>
+    <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s1">str</span><span class="s3">(</span><span class="s1">index</span><span class="s3">)</span><span class="s9">] </span><span class="s2">= </span><span class="s5">'day'</span>
+    <span class="s1">prize_scenario</span><span class="s9">[</span><span class="s5">'count'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">index</span>
+
+    <span class="s0">for </span><span class="s1">key</span><span class="s6">, </span><span class="s1">val </span><span class="s0">in </span><span class="s1">prize_scenario</span><span class="s4">.</span><span class="s1">items</span><span class="s3">()</span><span class="s2">:</span>
+        <span class="s1">put_scenario_log</span><span class="s3">( </span><span class="s1">key </span><span class="s2">+ </span><span class="s5">' : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">val</span><span class="s3">) )</span>
+
+
+<span class="s0">def </span><span class="s1">build_effect_scenario</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">cmd_btn_clear_scenario_log</span><span class="s3">()</span>
+
+    <span class="s1">target_prize </span><span class="s2">= </span><span class="s7">80000</span>
+    <span class="s1">effect_scenario </span><span class="s2">= </span><span class="s1">dict</span><span class="s3">()</span>
+    <span class="s1">effect_scenario</span><span class="s9">[</span><span class="s5">'active'</span><span class="s9">] </span><span class="s2">= </span><span class="s0">True</span>
+    <span class="s1">effect_scenario</span><span class="s9">[</span><span class="s5">'count'</span><span class="s9">] </span><span class="s2">= </span><span class="s7">0</span>
+    <span class="s1">effect_scenario</span><span class="s9">[</span><span class="s5">'offset'</span><span class="s9">] </span><span class="s2">= </span><span class="s7">0</span>
+    <span class="s1">effect_scenario</span><span class="s9">[</span><span class="s5">'prize'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">target_prize</span>
+
+    <span class="s0">if </span><span class="s1">target_prize </span><span class="s2">&gt;= </span><span class="s7">500000</span><span class="s2">:</span>
+        <span class="s1">target_step </span><span class="s2">= </span><span class="s7">5</span>
+    <span class="s0">elif </span><span class="s1">target_prize </span><span class="s2">&gt;= </span><span class="s7">100000</span><span class="s2">:</span>
+        <span class="s1">target_step </span><span class="s2">= </span><span class="s7">4</span>
+    <span class="s0">elif </span><span class="s1">target_prize </span><span class="s2">&gt;= </span><span class="s7">10000</span><span class="s2">:</span>
+        <span class="s1">target_step </span><span class="s2">= </span><span class="s7">3</span>
+    <span class="s0">elif </span><span class="s1">target_prize </span><span class="s2">&gt; </span><span class="s7">0</span><span class="s2">:</span>
+        <span class="s1">target_step </span><span class="s2">= </span><span class="s7">2</span>
+    <span class="s0">else</span><span class="s2">:</span>
+        <span class="s1">target_step </span><span class="s2">= </span><span class="s7">1</span>
+
+    <span class="s1">current_step </span><span class="s2">= </span><span class="s7">0</span>
+
+    <span class="s1">steps_string_list </span><span class="s2">= </span><span class="s9">[</span><span class="s5">'night'</span><span class="s6">, </span><span class="s5">'turtle'</span><span class="s6">, </span><span class="s5">'jellyfish'</span><span class="s6">, </span><span class="s5">'shark'</span><span class="s6">, </span><span class="s5">'whale'</span><span class="s9">]</span>
+    <span class="s1">need_space_dict </span><span class="s2">= </span><span class="s10">{</span><span class="s5">'night'</span><span class="s2">: </span><span class="s9">[</span><span class="s7">10</span><span class="s6">, </span><span class="s7">30</span><span class="s9">]</span><span class="s6">, </span><span class="s5">'turtle'</span><span class="s2">: </span><span class="s9">[</span><span class="s7">20</span><span class="s6">, </span><span class="s7">40</span><span class="s9">]</span><span class="s6">, </span><span class="s5">'jellyfish'</span><span class="s2">: </span><span class="s9">[</span><span class="s7">40</span><span class="s6">, </span><span class="s7">80</span><span class="s9">]</span><span class="s6">, </span><span class="s5">'shark'</span><span class="s2">: </span><span class="s9">[</span><span class="s7">15</span><span class="s6">, </span><span class="s7">40</span><span class="s9">]</span><span class="s6">, </span><span class="s5">'whale'</span><span class="s2">: </span><span class="s9">[</span><span class="s7">50</span><span class="s6">, </span><span class="s7">100</span><span class="s9">]</span><span class="s10">}</span>
+
+    <span class="s1">offset </span><span class="s2">= </span><span class="s7">0</span>
+
+    <span class="s0">while </span><span class="s1">current_step </span><span class="s2">&lt; </span><span class="s1">target_step</span><span class="s2">:</span>
+        <span class="s1">step_string </span><span class="s2">= </span><span class="s1">steps_string_list</span><span class="s9">[</span><span class="s1">current_step</span><span class="s9">]</span>
+
+        <span class="s1">effect_scenario</span><span class="s9">[</span><span class="s1">str</span><span class="s3">(</span><span class="s1">offset</span><span class="s3">)</span><span class="s9">] </span><span class="s2">= </span><span class="s1">step_string</span>
+
+        <span class="s1">space </span><span class="s2">= </span><span class="s1">random</span><span class="s4">.</span><span class="s1">randrange</span><span class="s3">( </span><span class="s1">need_space_dict</span><span class="s9">[</span><span class="s1">step_string</span><span class="s9">][</span><span class="s7">0</span><span class="s9">]</span><span class="s6">, </span><span class="s1">need_space_dict</span><span class="s9">[</span><span class="s1">step_string</span><span class="s9">][</span><span class="s7">1</span><span class="s9">]</span><span class="s3">)</span>
+        <span class="s1">offset </span><span class="s2">+= </span><span class="s1">space</span>
+
+        <span class="s1">current_step </span><span class="s2">+= </span><span class="s7">1</span>
+
+    <span class="s1">effect_scenario</span><span class="s9">[</span><span class="s5">'count'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">offset</span>
+
+    <span class="s0">for </span><span class="s1">key</span><span class="s6">, </span><span class="s1">val </span><span class="s0">in </span><span class="s1">effect_scenario</span><span class="s4">.</span><span class="s1">items</span><span class="s3">()</span><span class="s2">:</span>
+        <span class="s1">put_scenario_log</span><span class="s3">( </span><span class="s1">key </span><span class="s2">+ </span><span class="s5">' : ' </span><span class="s2">+ </span><span class="s1">str</span><span class="s3">(</span><span class="s1">val</span><span class="s3">) )</span>
+
+    <span class="s1">build_prize_scenario</span><span class="s3">( </span><span class="s1">target_prize</span><span class="s3">)</span>
+
+
+<span class="s1">btn_test_prize </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">40</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;test&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_test_prize </span><span class="s3">)</span>
+<span class="s1">btn_test_prize</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">320</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">10</span><span class="s3">)</span>
+
+<span class="s1">frame_scenario_log </span><span class="s2">= </span><span class="s1">Frame</span><span class="s3">(</span><span class="s1">root</span><span class="s3">)</span>
+<span class="s1">scrollbar_scenario_log </span><span class="s2">= </span><span class="s1">Scrollbar</span><span class="s3">(</span><span class="s1">frame_scenario_log</span><span class="s3">)</span>
+<span class="s1">scrollbar_scenario_log</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">(</span><span class="s1">side</span><span class="s2">=</span><span class="s5">'right'</span><span class="s6">, </span><span class="s1">fill</span><span class="s2">=</span><span class="s5">'y'</span><span class="s3">)</span>
+<span class="s1">list_scenario_log </span><span class="s2">= </span><span class="s1">Listbox</span><span class="s3">(</span><span class="s1">frame_scenario_log</span><span class="s6">, </span><span class="s1">selectmode</span><span class="s2">=</span><span class="s5">'browse'</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">25</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">30</span><span class="s6">, </span><span class="s1">yscrollcommand </span><span class="s2">= </span><span class="s1">scrollbar_scenario_log</span><span class="s4">.</span><span class="s1">set</span><span class="s3">)</span>
+<span class="s1">list_scenario_log</span><span class="s4">.</span><span class="s1">pack</span><span class="s3">( </span><span class="s1">side</span><span class="s2">=</span><span class="s5">'left'</span><span class="s3">)</span>
+<span class="s1">scrollbar_scenario_log</span><span class="s9">[</span><span class="s5">'command'</span><span class="s9">] </span><span class="s2">= </span><span class="s1">list_scenario_log</span><span class="s4">.</span><span class="s1">yview</span>
+<span class="s1">frame_scenario_log</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">320</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">40</span><span class="s3">)</span>
+
+
+<span class="s0">def </span><span class="s1">cmd_btn_clear_scenario_log</span><span class="s3">()</span><span class="s2">:</span>
+    <span class="s1">list_scenario_log</span><span class="s4">.</span><span class="s1">delete</span><span class="s3">(</span><span class="s7">0</span><span class="s6">, </span><span class="s1">END</span><span class="s3">)</span>
+
+<span class="s0">def </span><span class="s1">put_scenario_log</span><span class="s3">(</span><span class="s1">log</span><span class="s3">)</span><span class="s2">:</span>
+    <span class="s1">list_scenario_log</span><span class="s4">.</span><span class="s1">insert</span><span class="s3">(</span><span class="s1">END</span><span class="s6">, </span><span class="s1">log</span><span class="s3">)</span>
+
+<span class="s1">btn_clear_scenario_log </span><span class="s2">= </span><span class="s1">Button</span><span class="s3">(</span><span class="s1">root</span><span class="s6">, </span><span class="s1">width</span><span class="s2">=</span><span class="s7">5</span><span class="s6">, </span><span class="s1">height</span><span class="s2">=</span><span class="s7">1</span><span class="s6">, </span><span class="s1">text</span><span class="s2">=</span><span class="s5">&quot;c&quot;</span><span class="s6">, </span><span class="s1">command</span><span class="s2">=</span><span class="s1">cmd_btn_clear_scenario_log </span><span class="s3">)</span>
+<span class="s1">btn_clear_scenario_log</span><span class="s4">.</span><span class="s1">place</span><span class="s3">(</span><span class="s1">x</span><span class="s2">=</span><span class="s7">550</span><span class="s6">, </span><span class="s1">y</span><span class="s2">=</span><span class="s7">40</span><span class="s3">)</span>
+
+
+
+
+
+
+
+<span class="s1">begin_spin_watch_thread</span><span class="s3">()</span>
+
+<span class="s1">root</span><span class="s4">.</span><span class="s1">mainloop</span><span class="s3">()</span>
+
+
+
+
+
+
+
+</pre>
+</body>
+</html>
