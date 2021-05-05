@@ -477,6 +477,7 @@ def build_event_scenario_step(target_prize):
     scenario['count'] = 0
     scenario['offset'] = 0
     scenario['prize'] = target_prize
+    scenario['reel_event'] = 'None'
 
     if target_prize == 0:
         seed = random.randrange(100)
@@ -542,7 +543,7 @@ def build_prize_scenario(target_prize, reel_event):
     prize_scenario['offset'] = 0
     prize_scenario['total_prize'] = target_prize
     prize_scenario['remain_prize'] = target_prize
-
+    prize_scenario['reel_event'] = reel_event
     index = 0
 
     if target_prize == 0 :
