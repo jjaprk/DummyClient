@@ -82,6 +82,15 @@ def end_spin(url, game_pk, token ):
     return response
 
 
+def gift_to_point(url, game_pk, token):
+    payload = {'game_pk': str(game_pk)}
+    files = []
+    headers = {'Authorization': 'Token ' + token}
+
+    response = requests.request("POST", url + '/API/game/gift_to_coin/', headers=headers, data=payload, files=files)
+    return response
+
+
 def close_game(url, game_pk, token):
     payload = {'game_pk': str(game_pk)}
     files = []

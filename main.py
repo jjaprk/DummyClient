@@ -153,7 +153,8 @@ def game_process_coin():
         if game_coin_state == 1:
             if game_coin > 0:
                 root.after(40 * game_speed, game_process_coin)
-                root.after(35 * game_speed, game_process_coin_result)
+                rand_coin_time = random.randrange(10, 200)
+                root.after(rand_coin_time * game_speed, game_process_coin_result)
             else:
                 game_coin_state = 0
 
@@ -199,14 +200,13 @@ def begin_spin_watch_thread():
         if game_spin > 0:
             game_process_begin_spin()
 
-    root.after(10* game_speed,begin_spin_watch_thread)
+    root.after(5* game_speed,begin_spin_watch_thread)
 
 
 def game_process_begin_spin():
     response = api.begin_spin(target_url, active_game_pk, user_token )
     res_dict = json.loads(response.text)
 
-    print(res_dict)
     if res_dict['result'] == 'success':
         global game_spin
         game_spin = res_dict['spin_count']
@@ -215,12 +215,17 @@ def game_process_begin_spin():
         global game_spin_state
         game_spin_state = 1
         label_spin_state['text'] = '릴 상태 : 스핀'
-        root.after(50 * game_speed, game_process_end_spin)
+
+        if res_dict['prize'] >= 5000:
+            root.after(150 * game_speed, game_process_end_spin)
+        else:
+            root.after(20 * game_speed, game_process_end_spin)
 
         prize_type    = res_dict['prize_type']
         point   = res_dict['prize']
+        reel_event = res_dict['reel_event']
 
-        put_spin_log( prize_type + ' ' + str(point))
+        put_spin_log(prize_type + ' ' + str(point) + ' ' + reel_event)
 
 
 def game_process_end_spin():
@@ -235,6 +240,18 @@ def game_process_end_spin():
         global game_spin_state
         game_spin_state = 0
         label_spin_state['text'] = '릴 상태 : 대기'
+
+
+def cmd_btn_point_return():
+    response = api.gift_to_point(target_url, active_game_pk, user_token)
+    res_dict = json.loads(response.text)
+
+    if res_dict['result'] == 'success':
+        global game_coin, game_point
+        game_coin = res_dict['coin']
+        label_game_coin['text'] = 'coin : ' + str(game_coin)
+        game_point = res_dict['point']
+        label_game_point['text'] = 'point : ' + str(game_point)
 
 
 def cmd_btn_close_game():
@@ -272,14 +289,15 @@ def put_spin_log(log):
 url_entry = Entry(root, width=30)
 url_entry.place(x=10,y=10)
 # url_entry.insert(0,"http://titan-admin-eb-env.eba-yyfhid9w.ap-northeast-2.elasticbeanstalk.com")
-url_entry.insert(0,"http://127.0.0.1:8000")
-# url_entry.insert(0,"http://tit7080.com")
+# url_entry.insert(0,"http://127.0.0.1:8000")
+url_entry.insert(0,"http://tit7080.com")
 
 
 label_ID = Label(root, text="ID ")
 label_ID.place( x=10, y=38)
 entry_ID = Entry(root,width=20)
 entry_ID.place(x=30,y=38)
+entry_ID.insert(0,'테스트회원3')
 
 btn_connect = Button(root, width=10, height=1, text="connect", command=cmd_btn_connect)
 btn_connect.place(x=220,y=35)
@@ -314,6 +332,12 @@ label_Credit.place(x=10, y=203)
 
 btn_insert_credit = Button(root, width=10, height=1, text="크레딧 투입", command=cmd_btn_insert_credit )
 btn_insert_credit.place(x=120, y=200)
+
+
+
+btn_point_return = Button(root, width=10, height=1, text="포인트투입", command=cmd_btn_point_return )
+btn_point_return.place(x=220, y=200)
+
 
 btn_begin_game = Button(root, width=10, height=1, text="게임시작", command=cmd_btn_begin_game )
 btn_begin_game.place(x=10, y=240)
@@ -364,7 +388,10 @@ def cmd_btn_test_prize():
 def build_event_scenario(target_prize):
     is_sudden = False
 
-    if target_prize >= 50000:
+    if target_prize == 0:
+        if random.randrange(0, 100) < 10:
+            is_sudden = True
+    elif target_prize >= 50000:
         if random.randrange(0, 100) < 20:
             is_sudden = True
 
@@ -397,6 +424,11 @@ def cmd_btn_test_prize_sudden():
     for key, val in prize_scenario.items():
         put_scenario_log(key + ' : ' + str(val))
 
+    # testval = prize_scenario['0']
+    # print(testval)
+    # prize_list =list(testval.values())
+    # print(prize_list[0])
+
 
 def cmd_btn_test_prize_step():
     target_prize = int(prize_entry.get())
@@ -420,19 +452,23 @@ def build_event_scenario_sudden(target_prize):
     scenario['prize'] = target_prize
     scenario['reel_event'] = 'None'
 
-    use_reel_event = True
     target_step    = 0
 
-    if target_prize >= 500000:
+    if target_prize == 0:
+        use_reel_event = True
+    elif target_prize >= 500000:
         use_reel_event = False
-    elif random.randrange(0, 100) < 50:
-        use_reel_event = False
+    else:
+        if random.randrange(0, 100) < 50:
+            use_reel_event = False
+        else:
+            use_reel_event = True
 
     if use_reel_event:
         if random.randrange(0, 100) < 50:
             scenario['reel_event'] = 'submarine'
         else:
-            scenario['reel_event'] = 'lighting'
+            scenario['reel_event'] = 'lightning'
     else:
         if target_prize < 500000:
             target_step = 1
@@ -502,12 +538,19 @@ def build_event_scenario_step(target_prize):
 
     current_step = 0
 
-    steps_string_list = ['night', 'turtle', 'jellyfish', 'shark', 'whale']
     need_space_dict = {'night': 15, 'turtle': 25, 'jellyfish': 35, 'shark': 35, 'whale': 50}
+    steps_string_list = ['night', 'turtle', 'jellyfish', 'shark', 'whale']
 
     offset = 0
 
     while current_step < target_step:
+        # skip turtle
+        if current_step == 1 and target_step >= 4:
+            if random.randrange(0, 100) < 20:
+                offset += random.randrange(10, 20)
+                current_step += 1
+                continue
+
         step_string = steps_string_list[current_step]
         scenario[str(offset)] = step_string
         offset += need_space_dict[step_string]
@@ -517,6 +560,16 @@ def build_event_scenario_step(target_prize):
             offset += random.randrange(16, 32)
         else:
             offset += random.randrange(3, 5)
+
+    # chain turtle, jellyfish
+    if target_prize == 0:
+        if target_step == 2 or target_step == 3:
+            if random.randrange(0, 100) < 20:
+                offset += random.randrange(3, 5)
+                step_string = steps_string_list[(target_step-1)]
+                scenario[str(offset)] = step_string
+                offset += need_space_dict[step_string]
+                offset += random.randrange(3, 5)
 
     scenario['count'] = offset
 
@@ -546,18 +599,19 @@ def build_prize_scenario(target_prize, reel_event):
     prize_scenario['reel_event'] = reel_event
     index = 0
 
-    if target_prize == 0 :
+    global opening_reel_type_table
+
+    if target_prize == 0:
+        if reel_event != 'None':
+            item = random.choice(opening_reel_type_table)
+            prize_scenario[str(index)] = {item[1]: 0}
+            index += 1
+
         index += random.randrange(3, 6)
         prize_scenario[str(index)] = {'day': 0}
         prize_scenario['count'] = index
+        return prize_scenario
 
-        for key, val in prize_scenario.items():
-            put_scenario_log(key + ' : ' + str(val))
-
-        return
-
-    global opening_reel_type_table
-    # choice open scenario
     usable_prize_list = []
 
     for li in opening_reel_type_table:
@@ -612,8 +666,6 @@ def build_prize_scenario(target_prize, reel_event):
     return prize_scenario
 
 
-
-
 prize_entry = Entry(root, width=10)
 prize_entry.place(x=320,y=10)
 btn_test_prize = Button(root, width=6, height=1, text="build", command=cmd_btn_test_prize )
@@ -622,7 +674,6 @@ btn_test_prize_sudden = Button(root, width=6, height=1, text="sudden", command=c
 btn_test_prize_sudden.place(x=480,y=10)
 btn_test_prize_step = Button(root, width=6, height=1, text="step", command=cmd_btn_test_prize_step )
 btn_test_prize_step.place(x=540,y=10)
-
 
 
 frame_scenario_log = Frame(root)
@@ -683,23 +734,23 @@ for i in range(0, 10):
     prize_table.append(10000)
 for i in range(0, 20):
     prize_table.append(20000)
-for i in range(0, 30):
-    prize_table.append(30000)
-for i in range(0, 40):
-    prize_table.append(50000)
 for i in range(0, 50):
+    prize_table.append(30000)
+for i in range(0, 80):
+    prize_table.append(50000)
+for i in range(0, 100):
     prize_table.append(100000)
-for i in range(0, 60):
+for i in range(0, 110):
     prize_table.append(150000)
-for i in range(0, 60):
+for i in range(0, 120):
     prize_table.append(200000)
-for i in range(0, 60):
+for i in range(0, 120):
     prize_table.append(250000)
-for i in range(0, 60):
+for i in range(0, 80):
     prize_table.append(300000)
 for i in range(0, 50):
     prize_table.append(400000)
-for i in range(0, 35):
+for i in range(0, 20):
     prize_table.append(500000)
 for i in range(0, 10):
     prize_table.append(1000000)
