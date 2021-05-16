@@ -71,7 +71,7 @@ def refresh_gamelist():
 def cmd_btn_create_game():
     response = api.create_game(target_url, 100, user_token)
     res_dict = json.loads(response.text)
-    # print(res_dict)
+    print(res_dict)
 
     if res_dict['result'] == 'success':
         # new_game_dict = { 'pk': res_dict['pk'], 'coin': res_dict['coin'], 'point': res_dict['point']}
@@ -105,7 +105,7 @@ def cmd_btn_resume_game():
 
     response = api.resume_game(target_url, active_game_pk, user_token)
     res_dict = json.loads(response.text)
-    # print(res_dict)
+    print(res_dict)
 
     if res_dict['result'] == 'success':
         global game_coin, game_point, game_spin
@@ -481,8 +481,11 @@ def build_event_scenario_sudden(target_prize):
     if random.randrange(0, 100) < 50:
         use_night = True
 
-    steps_string_list = ['night', 'shark', 'whale', ]
-    need_space_dict = {'night': 15, 'shark': 35, 'whale': 50}
+    steps_string_list = ['night', 'shark', 'whale_1', ]
+    need_space_dict = {'night': 15, 'shark': 82, 'whale_1': 90}
+
+    steps_long_string_list = ['night', 'shark', 'whale_2']
+    need_long_space_dict = {'night': 15, 'shark': 82, 'whale_2': 150}
 
     if use_night:
         step_string = steps_string_list[0]
@@ -498,13 +501,27 @@ def build_event_scenario_sudden(target_prize):
             offset += random.randrange(3, 5)
 
         if target_step == 2:
-            step_string = steps_string_list[target_step]
-            scenario[str(offset)] = step_string
-            offset += need_space_dict[step_string]
+            if target_prize >= 1500000:
+                step_string = steps_long_string_list[target_step]
+                scenario[str(offset)] = step_string
+                offset += need_long_space_dict[step_string]
+            elif target_prize >= 1000000:
+                if random.randrange(0, 100) < 20:
+                    step_string = steps_long_string_list[target_step]
+                    scenario[str(offset)] = step_string
+                    offset += need_long_space_dict[step_string]
+                else:
+                    step_string = steps_string_list[target_step]
+                    scenario[str(offset)] = step_string
+                    offset += need_space_dict[step_string]
+            else:
+                step_string = steps_string_list[target_step]
+                scenario[str(offset)] = step_string
+                offset += need_space_dict[step_string]
+
             offset += random.randrange(3, 5)
 
     scenario['count'] = offset
-
     return scenario
 
 
@@ -536,17 +553,44 @@ def build_event_scenario_step(target_prize):
             else:
                 target_step = 1
 
+    steps_string_list = ['night', 'turtle_1', 'jellyfish', 'shark', 'whale_1']
+    need_space_dict = {'night': 15, 'turtle_1': 72, 'jellyfish': 130, 'shark': 82, 'whale_1': 90}
+
+    steps_long_string_list = ['night', 'turtle_2', 'jellyfish', 'shark', 'whale_2']
+    need_long_space_dict = {'night': 15, 'turtle_2': 110, 'jellyfish': 130, 'shark': 82, 'whale_2': 150}
+
     current_step = 0
-
-    need_space_dict = {'night': 15, 'turtle': 25, 'jellyfish': 35, 'shark': 35, 'whale': 50}
-    steps_string_list = ['night', 'turtle', 'jellyfish', 'shark', 'whale']
-
     offset = 0
 
     while current_step < target_step:
         # skip turtle
         if current_step == 1 and target_step >= 4:
+            rand_seed = random.randrange(0, 100)
+            if rand_seed < 20:# skip turtle
+                offset += random.randrange(10, 20)
+                current_step += 1
+                continue
+            # turtle_2
+            elif rand_seed < 50:
+                step_string = steps_long_string_list[current_step]
+                scenario[str(offset)] = step_string
+                offset += need_long_space_dict[step_string]
+                offset += random.randrange(10, 20)
+                current_step += 1
+                continue
+        # whale_2
+        elif current_step == 4 and target_prize >= 1500000:
+            step_string = steps_long_string_list[current_step]
+            scenario[str(offset)] = step_string
+            offset += need_long_space_dict[step_string]
+            offset += random.randrange(10, 20)
+            current_step += 1
+            continue
+        elif current_step == 4 and target_prize >= 1000000:
             if random.randrange(0, 100) < 20:
+                step_string = steps_long_string_list[current_step]
+                scenario[str(offset)] = step_string
+                offset += need_long_space_dict[step_string]
                 offset += random.randrange(10, 20)
                 current_step += 1
                 continue

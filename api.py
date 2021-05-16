@@ -32,7 +32,6 @@ def resume_game(url, game_pk, token):
     payload = {'game_pk': str(game_pk)}
     files = []
     headers = {'Authorization': 'Token ' + token}
-
     response = requests.request("POST", url + '/API/game/join/', headers=headers, data=payload, files=files)
     return response
 
