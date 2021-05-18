@@ -482,23 +482,23 @@ def build_event_scenario_sudden(target_prize):
         use_night = True
 
     steps_string_list = ['night', 'shark', 'whale_1', ]
-    need_space_dict = {'night': 15, 'shark': 82, 'whale_1': 90}
+    need_space_dict = {'night': 15, 'shark': 75, 'whale_1': 82}
 
     steps_long_string_list = ['night', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'shark': 82, 'whale_2': 150}
+    need_long_space_dict = {'night': 15, 'shark': 75, 'whale_2': 140}
 
     if use_night:
         step_string = steps_string_list[0]
         scenario[str(offset)] = step_string
         offset += need_space_dict[step_string]
-        offset += random.randrange(16, 32)
+        offset += 30
 
     if scenario['reel_event'] == 'None':
         if target_step == 1:
             step_string = steps_string_list[target_step]
             scenario[str(offset)] = step_string
             offset += need_space_dict[step_string]
-            offset += random.randrange(3, 5)
+            offset += 20
 
         if target_step == 2:
             if target_prize >= 1500000:
@@ -519,7 +519,7 @@ def build_event_scenario_sudden(target_prize):
                 scenario[str(offset)] = step_string
                 offset += need_space_dict[step_string]
 
-            offset += random.randrange(3, 5)
+            offset += 20
 
     scenario['count'] = offset
     return scenario
@@ -554,10 +554,10 @@ def build_event_scenario_step(target_prize):
                 target_step = 1
 
     steps_string_list = ['night', 'turtle_1', 'jellyfish', 'shark', 'whale_1']
-    need_space_dict = {'night': 15, 'turtle_1': 72, 'jellyfish': 130, 'shark': 82, 'whale_1': 90}
+    need_space_dict = {'night': 15, 'turtle_1': 66, 'jellyfish': 120, 'shark': 75, 'whale_1': 82}
 
     steps_long_string_list = ['night', 'turtle_2', 'jellyfish', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'turtle_2': 110, 'jellyfish': 130, 'shark': 82, 'whale_2': 150}
+    need_long_space_dict = {'night': 15, 'turtle_2': 103, 'jellyfish': 120, 'shark': 75, 'whale_2': 140}
 
     current_step = 0
     offset = 0
@@ -566,8 +566,7 @@ def build_event_scenario_step(target_prize):
         # skip turtle
         if current_step == 1 and target_step >= 4:
             rand_seed = random.randrange(0, 100)
-            if rand_seed < 20:# skip turtle
-                offset += random.randrange(10, 20)
+            if rand_seed < 20: # skip turtle
                 current_step += 1
                 continue
             # turtle_2
@@ -575,7 +574,7 @@ def build_event_scenario_step(target_prize):
                 step_string = steps_long_string_list[current_step]
                 scenario[str(offset)] = step_string
                 offset += need_long_space_dict[step_string]
-                offset += random.randrange(10, 20)
+                offset += 30
                 current_step += 1
                 continue
         # whale_2
@@ -583,7 +582,7 @@ def build_event_scenario_step(target_prize):
             step_string = steps_long_string_list[current_step]
             scenario[str(offset)] = step_string
             offset += need_long_space_dict[step_string]
-            offset += random.randrange(10, 20)
+            offset += 30
             current_step += 1
             continue
         elif current_step == 4 and target_prize >= 1000000:
@@ -591,29 +590,24 @@ def build_event_scenario_step(target_prize):
                 step_string = steps_long_string_list[current_step]
                 scenario[str(offset)] = step_string
                 offset += need_long_space_dict[step_string]
-                offset += random.randrange(10, 20)
+                offset += 30
                 current_step += 1
                 continue
 
         step_string = steps_string_list[current_step]
         scenario[str(offset)] = step_string
         offset += need_space_dict[step_string]
+        offset += 30
         current_step += 1
-
-        if current_step < target_step:  # has next step
-            offset += random.randrange(16, 32)
-        else:
-            offset += random.randrange(3, 5)
 
     # chain turtle, jellyfish
     if target_prize == 0:
         if target_step == 2 or target_step == 3:
             if random.randrange(0, 100) < 20:
-                offset += random.randrange(3, 5)
+                offset += 30
                 step_string = steps_string_list[(target_step-1)]
                 scenario[str(offset)] = step_string
                 offset += need_space_dict[step_string]
-                offset += random.randrange(3, 5)
 
     scenario['count'] = offset
 
@@ -651,9 +645,9 @@ def build_prize_scenario(target_prize, reel_event):
             prize_scenario[str(index)] = {item[1]: 0}
             index += 1
 
-        index += random.randrange(3, 6)
+        index += 5
         prize_scenario[str(index)] = {'day': 0}
-        prize_scenario['count'] = index
+        prize_scenario['count'] = (index + 1)
         return prize_scenario
 
     usable_prize_list = []
@@ -703,7 +697,7 @@ def build_prize_scenario(target_prize, reel_event):
             else:
                 index += 1
 
-    index += random.randrange(3, 6)
+    index += 5
     prize_scenario[str(index)] = {'day': 0}
     prize_scenario['count'] = index
 
