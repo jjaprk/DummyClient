@@ -391,7 +391,7 @@ def build_event_scenario(target_prize):
     if target_prize == 0:
         if random.randrange(0, 100) < 10:
             is_sudden = True
-    elif target_prize >= 50000:
+    elif target_prize >= 100000:
         if random.randrange(0, 100) < 20:
             is_sudden = True
 
@@ -482,10 +482,10 @@ def build_event_scenario_sudden(target_prize):
         use_night = True
 
     steps_string_list = ['night', 'shark', 'whale_1', ]
-    need_space_dict = {'night': 15, 'shark': 75, 'whale_1': 82}
+    need_space_dict = {'night': 15, 'shark': 70, 'whale_1': 82}
 
     steps_long_string_list = ['night', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'shark': 75, 'whale_2': 140}
+    need_long_space_dict = {'night': 15, 'shark': 70, 'whale_2': 140}
 
     if use_night:
         step_string = steps_string_list[0]
@@ -554,10 +554,10 @@ def build_event_scenario_step(target_prize):
                 target_step = 1
 
     steps_string_list = ['night', 'turtle_1', 'jellyfish', 'shark', 'whale_1']
-    need_space_dict = {'night': 15, 'turtle_1': 66, 'jellyfish': 120, 'shark': 75, 'whale_1': 82}
+    need_space_dict = {'night': 15, 'turtle_1': 66, 'jellyfish': 120, 'shark': 70, 'whale_1': 82}
 
     steps_long_string_list = ['night', 'turtle_2', 'jellyfish', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'turtle_2': 103, 'jellyfish': 120, 'shark': 75, 'whale_2': 140}
+    need_long_space_dict = {'night': 15, 'turtle_2': 103, 'jellyfish': 120, 'shark': 70, 'whale_2': 140}
 
     current_step = 0
     offset = 0
@@ -641,7 +641,7 @@ def build_prize_scenario(target_prize, reel_event):
 
     if target_prize == 0:
         if reel_event != 'None':
-            item = random.choice(opening_reel_type_table)
+            item = opening_reel_type_table[random.randrange(0, 20)]
             prize_scenario[str(index)] = {item[1]: 0}
             index += 1
 
