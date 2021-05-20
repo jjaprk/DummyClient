@@ -485,7 +485,7 @@ def build_event_scenario_sudden(target_prize):
     need_space_dict = {'night': 15, 'shark': 70, 'whale_1': 43}
 
     steps_long_string_list = ['night', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'shark': 70, 'whale_2': 75}
+    need_long_space_dict = {'night': 15, 'shark': 70, 'whale_2': 98}
 
     if use_night:
         step_string = steps_string_list[0]
@@ -557,7 +557,7 @@ def build_event_scenario_step(target_prize):
     need_space_dict = {'night': 15, 'turtle_1': 34, 'jellyfish_1': 45, 'shark': 70, 'whale_1': 43}
 
     steps_long_string_list = ['night', 'turtle_2', 'jellyfish_2', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'turtle_2': 53, 'jellyfish_2': 68, 'shark': 70, 'whale_2': 75}
+    need_long_space_dict = {'night': 15, 'turtle_2': 53, 'jellyfish_2': 68, 'shark': 70, 'whale_2': 98}
 
     current_step = 0
     offset = 0
