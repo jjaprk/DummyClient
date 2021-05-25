@@ -106,7 +106,6 @@ def cmd_btn_resume_game():
 
     response = api.resume_game(target_url, active_game_pk, user_token)
     res_dict = json.loads(response.text)
-    print(res_dict)
 
     if res_dict['result'] == 'success':
         global game_coin, game_point, game_spin
@@ -403,9 +402,9 @@ def build_event_scenario(target_prize, game_cost):
             is_sudden = True
 
     if is_sudden:
-        scenario = build_event_scenario_sudden(target_prize, int(gamecost_variable.get()))
+        scenario = build_event_scenario_sudden(target_prize, game_cost)
     else:
-        scenario = build_event_scenario_step(target_prize, int(gamecost_variable.get()))
+        scenario = build_event_scenario_step(target_prize, game_cost)
 
     prize_scenario = build_prize_scenario(target_prize, int(gamecost_variable.get()), scenario['reel_event'])
 
@@ -546,7 +545,7 @@ def build_event_scenario_step(target_prize, game_cost):
             target_step = 5
         elif target_prize >= (1000 * game_cost):
             target_step = 4
-        elif target_prize >= ( 300 * game_cost):
+        elif target_prize >= (300 * game_cost):
             target_step = 3
         else:   # 2, 1
             if random.randrange(0, 100) < 80:
@@ -748,8 +747,7 @@ def cmd_btn_test_scenario():
     game_cost = int(gamecost_variable.get())
 
     for i in range(0, num_games):
-        prize = build_random_scenario()
-        prize *= game_cost
+        prize = build_random_scenario(game_cost)
         cost += game_cost
 
         if prize > 0:
@@ -777,36 +775,6 @@ btn_test_scenario_log.place(x=550, y=80)
 
 prize_table = []
 
-# for i in range(0, 10):
-#     prize_table.append(10000)
-# for i in range(0, 20):
-#     prize_table.append(20000)
-# for i in range(0, 50):
-#     prize_table.append(30000)
-# for i in range(0, 80):
-#     prize_table.append(50000)
-# for i in range(0, 100):
-#     prize_table.append(100000)
-# for i in range(0, 110):
-#     prize_table.append(150000)
-# for i in range(0, 120):
-#     prize_table.append(200000)
-# for i in range(0, 120):
-#     prize_table.append(250000)
-# for i in range(0, 80):
-#     prize_table.append(300000)
-# for i in range(0, 50):
-#     prize_table.append(400000)
-# for i in range(0, 20):
-#     prize_table.append(500000)
-# for i in range(0, 10):
-#     prize_table.append(1000000)
-# for i in range(0, 3):
-#     prize_table.append(1500000)
-# for i in range(0, 2):
-#     prize_table.append(2000000)
-# for i in range(0, 1):
-#     prize_table.append(2500000)
 for i in range(0, 10):
     prize_table.append(100)
 for i in range(0, 20):
@@ -839,7 +807,7 @@ for i in range(0, 1):
     prize_table.append(25000)
 
 
-def build_random_scenario():
+def build_random_scenario(game_cost):
     global prize_table
 
     prize = 0
@@ -847,7 +815,7 @@ def build_random_scenario():
     if random.randrange(0, 3000) == 77:
         prize = random.choice(prize_table)
 
-    return prize
+    return prize * game_cost
 
 
 begin_spin_watch_thread()
