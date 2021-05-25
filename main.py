@@ -1,3 +1,4 @@
+import copy
 from tkinter import *
 from tkinter import messagebox
 
@@ -69,7 +70,7 @@ def refresh_gamelist():
 
 
 def cmd_btn_create_game():
-    response = api.create_game(target_url, 100, user_token)
+    response = api.create_game(target_url, gamecost_variable.get(), user_token)
     res_dict = json.loads(response.text)
     print(res_dict)
 
@@ -289,8 +290,8 @@ def put_spin_log(log):
 url_entry = Entry(root, width=30)
 url_entry.place(x=10,y=10)
 # url_entry.insert(0,"http://titan-admin-eb-env.eba-yyfhid9w.ap-northeast-2.elasticbeanstalk.com")
-# url_entry.insert(0,"http://127.0.0.1:8000")
-url_entry.insert(0,"http://tit7080.com")
+url_entry.insert(0,"http://127.0.0.1:8000")
+# url_entry.insert(0,"http://tit7080.com")
 
 
 label_ID = Label(root, text="ID ")
@@ -311,12 +312,18 @@ list_Games.pack(side='left')
 scrollbar_game_list['command'] = list_Games.yview
 frame_game_list.place(x=10, y=70)
 
-btn_refresh_game_list = Button(root, width=10, height=1, text="리스트갱신", command=refresh_gamelist )
-btn_refresh_game_list.place(x=10,y=160)
+# btn_refresh_game_list = Button(root, width=10, height=1, text="리스트갱신", command=refresh_gamelist )
+# btn_refresh_game_list.place(x=10,y=160)
+game_cost_list = ['100', '200', '400', '800']
+
+gamecost_variable = StringVar(root)
+gamecost_variable.set(game_cost_list[0])
+
+Dropdown_cost = OptionMenu(root, gamecost_variable, *game_cost_list)
+Dropdown_cost.place(x=10, y=160)
 
 btn_create_game = Button(root, width=10, height=1, text="게임만들기", command=cmd_btn_create_game )
 btn_create_game.place(x=100,y=160)
-
 
 gamenumber_entry = Entry(root, width=3)
 gamenumber_entry['state'] = 'disabled'
@@ -382,25 +389,25 @@ btn_close_game.place(x=20, y=600)
 
 
 def cmd_btn_test_prize():
-    build_event_scenario(int(prize_entry.get()))
+    build_event_scenario(int(prize_entry.get()), int(gamecost_variable.get()))
 
 
-def build_event_scenario(target_prize):
+def build_event_scenario(target_prize, game_cost):
     is_sudden = False
 
     if target_prize == 0:
         if random.randrange(0, 100) < 10:
             is_sudden = True
-    elif target_prize >= 100000:
+    elif target_prize >= (1000 * game_cost):
         if random.randrange(0, 100) < 20:
             is_sudden = True
 
     if is_sudden:
-        scenario = build_event_scenario_sudden(target_prize)
+        scenario = build_event_scenario_sudden(target_prize, int(gamecost_variable.get()))
     else:
-        scenario = build_event_scenario_step(target_prize)
+        scenario = build_event_scenario_step(target_prize, int(gamecost_variable.get()))
 
-    prize_scenario = build_prize_scenario(target_prize, scenario['reel_event'])
+    prize_scenario = build_prize_scenario(target_prize, int(gamecost_variable.get()), scenario['reel_event'])
 
     cmd_btn_clear_scenario_log()
 
@@ -413,8 +420,8 @@ def build_event_scenario(target_prize):
 
 def cmd_btn_test_prize_sudden():
     target_prize = int(prize_entry.get())
-    scenario = build_event_scenario_sudden(target_prize)
-    prize_scenario = build_prize_scenario(target_prize, scenario['reel_event'])
+    scenario = build_event_scenario_sudden(target_prize, int(gamecost_variable.get()))
+    prize_scenario = build_prize_scenario(target_prize, int(gamecost_variable.get()), scenario['reel_event'])
 
     cmd_btn_clear_scenario_log()
 
@@ -423,17 +430,12 @@ def cmd_btn_test_prize_sudden():
 
     for key, val in prize_scenario.items():
         put_scenario_log(key + ' : ' + str(val))
-
-    # testval = prize_scenario['0']
-    # print(testval)
-    # prize_list =list(testval.values())
-    # print(prize_list[0])
 
 
 def cmd_btn_test_prize_step():
     target_prize = int(prize_entry.get())
-    scenario = build_event_scenario_step(target_prize)
-    prize_scenario = build_prize_scenario(target_prize, scenario['reel_event'])
+    scenario = build_event_scenario_step(target_prize, int(gamecost_variable.get()))
+    prize_scenario = build_prize_scenario(target_prize, int(gamecost_variable.get()), scenario['reel_event'])
 
     cmd_btn_clear_scenario_log()
 
@@ -444,8 +446,7 @@ def cmd_btn_test_prize_step():
         put_scenario_log(key + ' : ' + str(val))
 
 
-def build_event_scenario_sudden(target_prize):
-    # 0은 잠수함 번개 뻥으로 가야하는데 이건 최소한으로 해야한다. 통계 낼 방법을 생각해봐야겠는데
+def build_event_scenario_sudden(target_prize, game_cost):
     scenario = dict()
     scenario['count'] = 0
     scenario['offset'] = 0
@@ -456,7 +457,7 @@ def build_event_scenario_sudden(target_prize):
 
     if target_prize == 0:
         use_reel_event = True
-    elif target_prize >= 500000:
+    elif target_prize >= (5000 * game_cost):
         use_reel_event = False
     else:
         if random.randrange(0, 100) < 50:
@@ -470,7 +471,7 @@ def build_event_scenario_sudden(target_prize):
         else:
             scenario['reel_event'] = 'lightning'
     else:
-        if target_prize < 500000:
+        if target_prize < (5000 * game_cost):
             target_step = 1
         else:
             target_step = 2
@@ -501,11 +502,11 @@ def build_event_scenario_sudden(target_prize):
             offset += 20
 
         if target_step == 2:
-            if target_prize >= 1500000:
+            if target_prize >= (15000 * game_cost):
                 step_string = steps_long_string_list[target_step]
                 scenario[str(offset)] = step_string
                 offset += need_long_space_dict[step_string]
-            elif target_prize >= 1000000:
+            elif target_prize >= (10000 * game_cost):
                 if random.randrange(0, 100) < 20:
                     step_string = steps_long_string_list[target_step]
                     scenario[str(offset)] = step_string
@@ -525,7 +526,7 @@ def build_event_scenario_sudden(target_prize):
     return scenario
 
 
-def build_event_scenario_step(target_prize):
+def build_event_scenario_step(target_prize, game_cost):
     scenario = dict()
     scenario['count'] = 0
     scenario['offset'] = 0
@@ -541,11 +542,11 @@ def build_event_scenario_step(target_prize):
         else:
             target_step = 3
     else:
-        if target_prize >= 500000:
+        if target_prize >= (5000 * game_cost):
             target_step = 5
-        elif target_prize >= 100000:
+        elif target_prize >= (1000 * game_cost):
             target_step = 4
-        elif target_prize >= 30000:
+        elif target_prize >= ( 300 * game_cost):
             target_step = 3
         else:   # 2, 1
             if random.randrange(0, 100) < 80:
@@ -588,7 +589,7 @@ def build_event_scenario_step(target_prize):
                 continue
 
         # whale_2
-        elif current_step == 4 and target_prize >= 1500000:
+        elif current_step == 4 and target_prize >= (15000 * game_cost):
             step_string = steps_long_string_list[current_step]
             scenario[str(offset)] = step_string
             offset += need_long_space_dict[step_string]
@@ -607,21 +608,29 @@ def build_event_scenario_step(target_prize):
     return scenario
 
 
-opening_reel_type_table = (
-    (2500000,   'dolphin_center',   5,   20000),    (2000000,   'dolphin_center',   4,   20000),    (1500000,   'dolphin_center',   3,   20000),
-    (1000000,   'dolphin_center',   2,   20000),    (1000000,   'dolphin',          4,   20000),    (500000,    'dolphin_center',   1,   20000),
-    (500000,    'dolphin',          2,   20000),    (400000,    'bar_center',       4,   20000),    (300000,    'bar_center',       3,   20000),
-    (250000,    'bar',              5,   20000),    (250000,    'seven_center',     5,   20000),    (200000,    'bar_center',       2,   20000),
-    (200000,    'bar',              4,   20000),    (200000,    'seven_center',     4,   20000),    (150000,    'bar',              3,   20000),
-    (150000,    'seven_center',     3,   20000),    (100000,    'bar_center',       1,   20000),    (100000,    'bar',              2,   20000),
-    (100000,    'seven_center',     2,   20000),    (100000,    'seven',            4,   20000),    (50000,     'bar',              1,   20000),
-    (50000,     'seven_center',     1,   20000),    (50000,     'seven',            2,   20000),    (30000,     'star',             3,   20000),
-    (30000,     'target_center',    3,   10000),    (20000,     'star_center',      1,   20000),    (20000,     'star',             2,   20000),
-    (20000,     'target_center',    2,   10000),    (10000,     'target_center',    1,   10000),    (10000,     'target',           2,   10000),
-)
+opening_reel_type_table_origin = [
+    [25000,   'dolphin_center',   5,   200],    [20000,   'dolphin_center',   4,   200],    [15000,   'dolphin_center',   3,   200],
+    [10000,   'dolphin_center',   2,   200],    [10000,   'dolphin',          4,   200],    [5000,    'dolphin_center',   1,   200],
+    [5000,    'dolphin',          2,   200],    [4000,    'bar_center',       4,   200],    [3000,    'bar_center',       3,   200],
+    [2500,    'bar',              5,   200],    [2500,    'seven_center',     5,   200],    [2000,    'bar_center',       2,   200],
+    [2000,    'bar',              4,   200],    [2000,    'seven_center',     4,   200],    [1500,    'bar',              3,   200],
+    [1500,    'seven_center',     3,   200],    [1000,    'bar_center',       1,   200],    [1000,    'bar',              2,   200],
+    [1000,    'seven_center',     2,   200],    [1000,    'seven',            4,   200],    [500,     'bar',              1,   200],
+    [500,     'seven_center',     1,   200],    [500,     'seven',            2,   200],    [300,     'star',             3,   200],
+    [300,     'target_center',    3,   100],    [200,     'star_center',      1,   200],    [200,     'star',             2,   200],
+    [200,     'target_center',    2,   100],    [100,     'target_center',    1,   100],    [100,     'target',           2,   100],
+]
 
 
-def build_prize_scenario(target_prize, reel_event):
+def build_prize_scenario(target_prize, game_cost, reel_event):
+    global opening_reel_type_table_origin
+
+    opening_reel_type_table = copy.deepcopy(opening_reel_type_table_origin)
+
+    for item in opening_reel_type_table:
+        item[0] *= game_cost
+        item[3] *= game_cost
+
     prize_scenario = dict()
     prize_scenario['count'] = 0
     prize_scenario['offset'] = 0
@@ -629,8 +638,6 @@ def build_prize_scenario(target_prize, reel_event):
     prize_scenario['remain_prize'] = target_prize
     prize_scenario['reel_event'] = reel_event
     index = 0
-
-    global opening_reel_type_table
 
     if target_prize == 0:
         if reel_event != 'None':
@@ -668,15 +675,18 @@ def build_prize_scenario(target_prize, reel_event):
     clam_insert_index = random.randrange(3, 6)
 
     if clam_string == 'clam_3':
-        clam_prize = 1500
+        clam_prize = (15 * game_cost)
     elif clam_string == 'clam_4':
-        clam_prize = 7500
+        clam_prize = (75 * game_cost)
     else:
         clam_prize = 0
 
     prize_scenario[str(clam_insert_index)] = {clam_string: clam_prize}
 
-    usable_prize_table = [5000, 10000, 20000, 20000, 20000, 20000, 20000]
+    usable_prize_table = [50, 100, 200, 200, 200, 200, 200]
+
+    for i in range(0, len(usable_prize_table)):
+        usable_prize_table[i] *= game_cost
 
     while remain_prize > 0:
         prize = random.choice(usable_prize_table)
@@ -732,28 +742,34 @@ def cmd_btn_test_scenario():
     result = 0
     count = 0
     cost = 0
-    num_games = 10000000
+    num_games = 1000000
 
-    prize_dict = {'1': 0, '2': 0, '3': 0, '5': 0, '10': 0, '15': 0, '20': 0, '25': 0, '30': 0, '40': 0,
-                  '50': 0, '100': 0, '150': 0, '200': 0, '250': 0}
-    import pdb
+    prize_dict = dict()
+    game_cost = int(gamecost_variable.get())
+
     for i in range(0, num_games):
         prize = build_random_scenario()
-        cost += 100
+        prize *= game_cost
+        cost += game_cost
 
         if prize > 0:
             result += prize
             count += 1
 
             key = str(int(prize/10000))
-            prize_dict[key] += 1
+            if key in prize_dict:
+                prize_dict[key] = (prize_dict[key] + 1)
+            else:
+                prize_dict[key] = 1
 
     put_scenario_log(str(num_games/count))
     put_scenario_log(str(count) + " / " + str(result))
     put_scenario_log(str(cost) + " / " + str((result/cost)*100.0))
 
-    for key, val in prize_dict.items() :
-        put_scenario_log( key + " : " + str(val) )
+    sort_dict = sorted( prize_dict.items())
+
+    for item in sort_dict:
+        put_scenario_log( item[0] + " : " + str(item[1]) )
 
 
 btn_test_scenario_log = Button(root, width=5, height=1, text="T", command=cmd_btn_test_scenario )
@@ -761,36 +777,66 @@ btn_test_scenario_log.place(x=550, y=80)
 
 prize_table = []
 
+# for i in range(0, 10):
+#     prize_table.append(10000)
+# for i in range(0, 20):
+#     prize_table.append(20000)
+# for i in range(0, 50):
+#     prize_table.append(30000)
+# for i in range(0, 80):
+#     prize_table.append(50000)
+# for i in range(0, 100):
+#     prize_table.append(100000)
+# for i in range(0, 110):
+#     prize_table.append(150000)
+# for i in range(0, 120):
+#     prize_table.append(200000)
+# for i in range(0, 120):
+#     prize_table.append(250000)
+# for i in range(0, 80):
+#     prize_table.append(300000)
+# for i in range(0, 50):
+#     prize_table.append(400000)
+# for i in range(0, 20):
+#     prize_table.append(500000)
+# for i in range(0, 10):
+#     prize_table.append(1000000)
+# for i in range(0, 3):
+#     prize_table.append(1500000)
+# for i in range(0, 2):
+#     prize_table.append(2000000)
+# for i in range(0, 1):
+#     prize_table.append(2500000)
+for i in range(0, 10):
+    prize_table.append(100)
+for i in range(0, 20):
+    prize_table.append(200)
+for i in range(0, 50):
+    prize_table.append(300)
+for i in range(0, 80):
+    prize_table.append(500)
+for i in range(0, 100):
+    prize_table.append(1000)
+for i in range(0, 110):
+    prize_table.append(1500)
+for i in range(0, 120):
+    prize_table.append(2000)
+for i in range(0, 120):
+    prize_table.append(2500)
+for i in range(0, 80):
+    prize_table.append(3000)
+for i in range(0, 50):
+    prize_table.append(4000)
+for i in range(0, 20):
+    prize_table.append(5000)
 for i in range(0, 10):
     prize_table.append(10000)
-for i in range(0, 20):
-    prize_table.append(20000)
-for i in range(0, 50):
-    prize_table.append(30000)
-for i in range(0, 80):
-    prize_table.append(50000)
-for i in range(0, 100):
-    prize_table.append(100000)
-for i in range(0, 110):
-    prize_table.append(150000)
-for i in range(0, 120):
-    prize_table.append(200000)
-for i in range(0, 120):
-    prize_table.append(250000)
-for i in range(0, 80):
-    prize_table.append(300000)
-for i in range(0, 50):
-    prize_table.append(400000)
-for i in range(0, 20):
-    prize_table.append(500000)
-for i in range(0, 10):
-    prize_table.append(1000000)
 for i in range(0, 3):
-    prize_table.append(1500000)
+    prize_table.append(15000)
 for i in range(0, 2):
-    prize_table.append(2000000)
+    prize_table.append(20000)
 for i in range(0, 1):
-    prize_table.append(2500000)
+    prize_table.append(25000)
 
 
 def build_random_scenario():
