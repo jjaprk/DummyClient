@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>TITAN GAME</title>
+        <style>
+            .grid {
+                    width: 1920px;
+                    margin: 0 auto;
+                    background-color: dimgrey;
+                    overflow: hidden; /*부모 높이를 잊어벼리기때문에 다시 높이를 생기게끔해주는 float해재 기법*/
+            }
+
+            .grid_item {
+                    width: 100px;
+                    height: 100px;
+                    float: left; /*가로 정렬을 하기위한 float*/
+            }
+
+            .grid_item.first {background-color: orange; width:660px; height:1000px;}
+            .grid_item.two {background-color: yellow;width:600px;height:1000px;}
+            .grid_item.third {background-color: royalblue;width:660px;height:1000px;}
+            .grid_item.broadcast {background-color: red;width:660px;height:500px;}
+        </style>
+    </head>
+
+    <body>
+    <div style="position:fixed;">
+        <div class="grid">
+            <div class="grid_item first">a</div>
+            <div class="grid_item two">b</div>
+            <div class="grid_item third">c
+            <div class="grid_item broadcast">broadcast</div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>
+
