@@ -5,7 +5,7 @@ import pdb
 
 
 def connect(url, user_id):
-    payload = {'id': user_id,'password': 'qqqq'}
+    payload = {'id': user_id,'password': 'popo'}
     files = []
     headers = {}
     response = requests.request("POST", url + '/API/auth/', headers=headers, data=payload, files=files)

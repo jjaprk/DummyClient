@@ -297,7 +297,7 @@ label_ID = Label(root, text="ID ")
 label_ID.place( x=10, y=38)
 entry_ID = Entry(root,width=20)
 entry_ID.place(x=30,y=38)
-entry_ID.insert(0,'테스트회원3')
+entry_ID.insert(0,'테스트회원2')
 
 btn_connect = Button(root, width=10, height=1, text="connect", command=cmd_btn_connect)
 btn_connect.place(x=220,y=35)
