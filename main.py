@@ -395,7 +395,7 @@ def build_event_scenario(target_prize, game_cost):
     is_sudden = False
 
     if target_prize == 0:
-        if random.randrange(0, 100) < 10:
+        if random.randrange(0, 100) < 5:
             is_sudden = True
     elif target_prize >= (1000 * game_cost):
         if random.randrange(0, 100) < 20:
@@ -743,6 +743,7 @@ def cmd_btn_test_scenario():
     cost = 0
     num_games = 10000000
 
+
     prize_dict = dict()
     game_cost = int(gamecost_variable.get())
 
@@ -785,32 +786,32 @@ for i in range(0, 10):
     prize_table.append(100)
 for i in range(0, 20):
     prize_table.append(200)
-for i in range(0, 50):
+for i in range(0, 40):
     prize_table.append(300)
 for i in range(0, 80):
     prize_table.append(500)
-for i in range(0, 100):
+for i in range(0, 150):
     prize_table.append(1000)
-for i in range(0, 110):
+for i in range(0, 120):
     prize_table.append(1500)
-for i in range(0, 120):
+for i in range(0, 90):
     prize_table.append(2000)
-for i in range(0, 120):
-    prize_table.append(2500)
-for i in range(0, 100):
-    prize_table.append(3000)
 for i in range(0, 60):
+    prize_table.append(2500)
+for i in range(0, 30):
+    prize_table.append(3000)
+for i in range(0, 15):
     prize_table.append(4000)
-for i in range(0, 10):
+for i in range(0, 8):
     prize_table.append(5000)
 for i in range(0, 5):
     prize_table.append(10000)
-for i in range(0, 3):
-    prize_table.append(15000)
 for i in range(0, 2):
-    prize_table.append(20000)
-for i in range(0, 1):
-    prize_table.append(25000)
+    prize_table.append(15000)
+# for i in range(0, 2):
+#     prize_table.append(20000)
+# for i in range(0, 1):
+#     prize_table.append(25000)
 
 
 def build_random_scenario(game_cost):
@@ -818,7 +819,7 @@ def build_random_scenario(game_cost):
 
     prize = 0
 
-    if random.randrange(0, 2700) == 77:
+    if random.randrange(0, 1800) == 77:
         prize = random.choice(prize_table)
 
     return prize * game_cost
