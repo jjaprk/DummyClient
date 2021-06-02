@@ -741,7 +741,7 @@ def cmd_btn_test_scenario():
     result = 0
     count = 0
     cost = 0
-    num_games = 1000000
+    num_games = 10000000
 
     prize_dict = dict()
     game_cost = int(gamecost_variable.get())
@@ -760,14 +760,20 @@ def cmd_btn_test_scenario():
             else:
                 prize_dict[key] = 1
 
+
     put_scenario_log(str(num_games/count))
     put_scenario_log(str(count) + " / " + str(result))
     put_scenario_log(str(cost) + " / " + str((result/cost)*100.0))
 
-    sort_dict = sorted( prize_dict.items())
+    prize_list = list()
+    for key, val in prize_dict.items():
+        prize_list.append((int(key), val))
 
-    for item in sort_dict:
-        put_scenario_log( item[0] + " : " + str(item[1]) )
+    prize_list.sort()
+    # sort_dict = sorted( prize_dict.items())
+
+    for item in prize_list:
+        put_scenario_log(str(item[0]) + " : " + str(item[1]) )
 
 
 btn_test_scenario_log = Button(root, width=5, height=1, text="T", command=cmd_btn_test_scenario )
@@ -791,13 +797,13 @@ for i in range(0, 120):
     prize_table.append(2000)
 for i in range(0, 120):
     prize_table.append(2500)
-for i in range(0, 80):
+for i in range(0, 100):
     prize_table.append(3000)
-for i in range(0, 50):
+for i in range(0, 60):
     prize_table.append(4000)
-for i in range(0, 20):
-    prize_table.append(5000)
 for i in range(0, 10):
+    prize_table.append(5000)
+for i in range(0, 5):
     prize_table.append(10000)
 for i in range(0, 3):
     prize_table.append(15000)
@@ -812,7 +818,7 @@ def build_random_scenario(game_cost):
 
     prize = 0
 
-    if random.randrange(0, 3000) == 77:
+    if random.randrange(0, 2700) == 77:
         prize = random.choice(prize_table)
 
     return prize * game_cost
