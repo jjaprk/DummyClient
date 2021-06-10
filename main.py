@@ -445,6 +445,13 @@ def cmd_btn_test_prize_step():
         put_scenario_log(key + ' : ' + str(val))
 
 
+event_scenario_steps_game_count = {
+    'night': 5, 'turtle_1': 31, 'turtle_2': 62, 'turtle_3': 89,
+    'jellyfish_1': 40, 'jellyfish_2': 70, 'jellyfish_3': 108,
+    'shark': 70, 'whale_1': 41, 'whale_2': 94
+}
+
+
 def build_event_scenario_sudden(target_prize, game_cost):
     scenario = dict()
     scenario['count'] = 0
@@ -458,6 +465,8 @@ def build_event_scenario_sudden(target_prize, game_cost):
         use_reel_event = True
     elif target_prize >= (5000 * game_cost):
         use_reel_event = False
+    elif target_prize <= (1000 * game_cost):
+        use_reel_event = True
     else:
         if random.randrange(0, 100) < 50:
             use_reel_event = False
@@ -478,51 +487,89 @@ def build_event_scenario_sudden(target_prize, game_cost):
     offset = 0
 
     use_night = False
-    if random.randrange(0, 100) < 50:
+    if random.randrange(0, 100) < 70:
         use_night = True
 
-    steps_string_list = ['night', 'shark', 'whale_1', ]
-    need_space_dict = {'night': 15, 'shark': 70, 'whale_1': 43}
-
-    steps_long_string_list = ['night', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'shark': 70, 'whale_2': 98}
-
     if use_night:
-        step_string = steps_string_list[0]
-        scenario[str(offset)] = step_string
-        offset += need_space_dict[step_string]
-        offset += 30
+        scenario[str(offset)] = 'night'
+        offset += event_scenario_steps_game_count['night']
+        offset += (20 + random.randrange(0, 20))
 
     if scenario['reel_event'] == 'None':
         if target_step == 1:
-            step_string = steps_string_list[target_step]
-            scenario[str(offset)] = step_string
-            offset += need_space_dict[step_string]
-            offset += 20
+            scenario[str(offset)] = 'shark'
+            offset += event_scenario_steps_game_count['shark']
+            offset += 2
 
         if target_step == 2:
             if target_prize >= (15000 * game_cost):
-                step_string = steps_long_string_list[target_step]
-                scenario[str(offset)] = step_string
-                offset += need_long_space_dict[step_string]
-            elif target_prize >= (10000 * game_cost):
-                if random.randrange(0, 100) < 20:
-                    step_string = steps_long_string_list[target_step]
-                    scenario[str(offset)] = step_string
-                    offset += need_long_space_dict[step_string]
-                else:
-                    step_string = steps_string_list[target_step]
-                    scenario[str(offset)] = step_string
-                    offset += need_space_dict[step_string]
+                step_string = 'whale_2'
             else:
-                step_string = steps_string_list[target_step]
-                scenario[str(offset)] = step_string
-                offset += need_space_dict[step_string]
+                step_string = 'whale_1'
 
-            offset += 20
+            scenario[str(offset)] = step_string
+            offset += event_scenario_steps_game_count[step_string]
+            offset += 2
 
     scenario['count'] = offset
     return scenario
+
+
+event_scenario_steps_table = [
+    [0, 'night'],
+    [0, 'night'],
+    [0, 'night'],
+    [0, 'night'],
+    [0, 'night', 'turtle_1'],
+    [0, 'night', 'turtle_1'],
+    [0, 'night', 'turtle_1', 'jellyfish_1'],
+
+    [10000, 'night', 'turtle_1'],
+    [10000, 'night', 'turtle_2'],
+    [20000, 'night', 'turtle_2'],
+    [30000, 'night', 'turtle_2'],
+    [30000, 'night', 'turtle_3'],
+
+    [50000, 'night', 'turtle_3'],
+    [50000, 'night', 'turtle_2', 'jellyfish_2'],
+
+    [100000, 'night', 'turtle_3', 'jellyfish_2'],
+
+    [150000, 'night', 'turtle_3', 'jellyfish_3'],
+    [150000, 'night', 'turtle_1', 'jellyfish_1', 'shark'],
+    [200000, 'night', 'turtle_1', 'jellyfish_1', 'shark'],
+    [200000, 'night', 'turtle_2', 'jellyfish_2', 'shark'],
+    [200000, 'night', 'turtle_3', 'jellyfish_1', 'shark'],
+    [250000, 'night', 'turtle_1', 'jellyfish_1', 'shark'],
+    [250000, 'night', 'turtle_1', 'jellyfish_3', 'shark'],
+    [300000, 'night', 'turtle_3', 'jellyfish_2', 'shark'],
+    [400000, 'night', 'turtle_3', 'jellyfish_3', 'shark'],
+
+    [500000, 'night', 'turtle_1', 'jellyfish_1', 'shark', 'whale_1'],
+    [500000, 'night', 'turtle_1', 'jellyfish_1', 'shark', 'whale_1'],
+    [1000000, 'night', 'turtle_1', 'jellyfish_1', 'shark', 'whale_1'],
+    [1000000, 'night', 'turtle_1', 'jellyfish_1', 'shark', 'whale_1'],
+    [1500000, 'night', 'turtle_1', 'jellyfish_1', 'shark', 'whale_2'],
+
+    [1000000, 'night', 'turtle_2', 'jellyfish_2', 'shark', 'whale_1'],
+    [1500000, 'night', 'turtle_2', 'jellyfish_2', 'shark', 'whale_2'],
+    [2000000, 'night', 'turtle_2', 'jellyfish_2', 'shark', 'whale_2'],
+
+    [1500000, 'night', 'turtle_3', 'jellyfish_2', 'shark', 'whale_2'],
+    [2000000, 'night', 'turtle_3', 'jellyfish_2', 'shark', 'whale_2'],
+    [2500000, 'night', 'turtle_3', 'jellyfish_2', 'shark', 'whale_2'],
+
+    [1500000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [1500000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2000000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2000000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2000000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2000000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2500000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2500000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2500000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+    [2500000, 'night', 'turtle_3', 'jellyfish_3', 'shark', 'whale_2'],
+]
 
 
 def build_event_scenario_step(target_prize, game_cost):
@@ -532,75 +579,39 @@ def build_event_scenario_step(target_prize, game_cost):
     scenario['prize'] = target_prize
     scenario['reel_event'] = 'None'
 
-    if target_prize == 0:
-        seed = random.randrange(100)
-        if seed < 50:
-            target_step = 1
-        elif seed < 80:
-            target_step = 2
-        else:
-            target_step = 3
-    else:
-        if target_prize >= (5000 * game_cost):
-            target_step = 5
-        elif target_prize >= (1000 * game_cost):
-            target_step = 4
-        elif target_prize >= (300 * game_cost):
-            target_step = 3
-        else:   # 2, 1
-            if random.randrange(0, 100) < 80:
-                target_step = 2
-            else:
-                target_step = 1
+    # choice event scenario
+    scenario_prize = int((target_prize / game_cost)*100)
 
-    steps_string_list = ['night', 'turtle_1', 'jellyfish_1', 'shark', 'whale_1']
-    need_space_dict = {'night': 15, 'turtle_1': 34, 'jellyfish_1': 45, 'shark': 70, 'whale_1': 43}
+    event_script_list = None
 
-    steps_long_string_list = ['night', 'turtle_2', 'jellyfish_2', 'shark', 'whale_2']
-    need_long_space_dict = {'night': 15, 'turtle_2': 53, 'jellyfish_2': 68, 'shark': 70, 'whale_2': 98}
+    random.seed(a=None)
+    while event_script_list is None:
+        event = random.choice(event_scenario_steps_table)
 
-    current_step = 0
+        if event[0] == scenario_prize:
+            event_script_list = event.copy()
+            event_script_list.pop(0)
+            break
+
     offset = 0
 
-    while current_step < target_step:
-        # skip turtle
-        if current_step == 1 and target_step >= 4:
-            rand_seed = random.randrange(0, 100)
-            if rand_seed < 20: # skip turtle
-                current_step += 1
+    for step in event_script_list:
+        # skip turtles
+        if step in ['turtle_1', 'turtle_2', 'turtle_3']:
+            if scenario_prize >= 500000 and random.randrange(0, 100) < 40:
                 continue
-            # turtle_2
-            elif rand_seed < 50:
-                step_string = steps_long_string_list[current_step]
-                scenario[str(offset)] = step_string
-                offset += need_long_space_dict[step_string]
-                offset += 30
-                current_step += 1
+            elif scenario_prize >= 300000 and random.randrange(0, 100) < 30:
+                continue
+            elif scenario_prize >= 100000 and random.randrange(0, 100) < 20:
                 continue
 
-        elif current_step == 2:
-            if random.randrange(0, 100) < 30:
-                step_string = steps_long_string_list[current_step]
-                scenario[str(offset)] = step_string
-                offset += need_long_space_dict[step_string]
-                offset += 30
-                current_step += 1
-                continue
+        scenario[str(offset)] = step
+        offset += event_scenario_steps_game_count[step]
 
-        # whale_2
-        elif current_step == 4 and target_prize >= (15000 * game_cost):
-            step_string = steps_long_string_list[current_step]
-            scenario[str(offset)] = step_string
-            offset += need_long_space_dict[step_string]
-            offset += 30
-            current_step += 1
-            continue
-
-        step_string = steps_string_list[current_step]
-        scenario[str(offset)] = step_string
-        offset += need_space_dict[step_string]
-        offset += 30
-        current_step += 1
+        if step in ['whale_1', 'whale_2']:
+            offset += 2
+        else:
+            offset += (20 + random.randrange(0, 20))
 
     scenario['count'] = offset
 
@@ -640,7 +651,7 @@ def build_prize_scenario(target_prize, game_cost, reel_event):
 
     if target_prize == 0:
         if reel_event != 'None':
-            item = opening_reel_type_table[random.randrange(0, 20)]
+            item = opening_reel_type_table[random.randrange(6, 20)]
             prize_scenario[str(index)] = {item[1]: 0}
             index += 1
 
@@ -694,14 +705,14 @@ def build_prize_scenario(target_prize, game_cost, reel_event):
             prize_scenario[str(index)] = {'anything': prize}
             remain_prize -= prize
 
-            if random.randrange(0, 10) < 3:
+            if random.randrange(0, 10) < 2:
                 index += 2
             else:
                 index += 1
 
-    index += 5
+    index += 2
     prize_scenario[str(index)] = {'day': 0}
-    prize_scenario['count'] = index
+    prize_scenario['count'] = (index+1)
 
     return prize_scenario
 
@@ -743,7 +754,6 @@ def cmd_btn_test_scenario():
     cost = 0
     num_games = 10000000
 
-
     prize_dict = dict()
     game_cost = int(gamecost_variable.get())
 
@@ -760,7 +770,6 @@ def cmd_btn_test_scenario():
                 prize_dict[key] = (prize_dict[key] + 1)
             else:
                 prize_dict[key] = 1
-
 
     put_scenario_log(str(num_games/count))
     put_scenario_log(str(count) + " / " + str(result))
@@ -779,6 +788,66 @@ def cmd_btn_test_scenario():
 
 btn_test_scenario_log = Button(root, width=5, height=1, text="T", command=cmd_btn_test_scenario )
 btn_test_scenario_log.place(x=550, y=80)
+
+
+scenario_common_prize_table = []
+
+for i in range(0, 800):
+    scenario_common_prize_table.append(1)
+for i in range(0, 400):
+    scenario_common_prize_table.append(2)
+for i in range(0, 80):
+    scenario_common_prize_table.append(3)
+for i in range(0, 40):
+    scenario_common_prize_table.append(4)
+for i in range(0, 20):
+    scenario_common_prize_table.append(5)
+for i in range(0, 5):
+    scenario_common_prize_table.append(10)
+for i in range(0, 4):
+    scenario_common_prize_table.append(15)
+for i in range(0, 3):
+    scenario_common_prize_table.append(20)
+for i in range(0, 2):
+    scenario_common_prize_table.append(25)
+for i in range(0, 1):
+    scenario_common_prize_table.append(30)
+
+
+def getCommonPrize(game_cost):
+    global scenario_common_prize_table
+
+    prize = {'anything': 0}
+
+    if random.randrange(0, 101) > 91:
+        prize['anything'] = (random.choice(scenario_common_prize_table) * game_cost)
+
+    return prize
+
+
+def cmd_btn_test_common_prize():
+    result = 0
+    count = 0
+    cost = 0
+    num_games = 1000000
+
+    game_cost = int(gamecost_variable.get())
+
+    for i in range(0, num_games):
+        prize = getCommonPrize(game_cost)['anything']
+        cost += game_cost
+
+        if prize > 0:
+            result += prize
+            count += 1
+
+    put_scenario_log(str(num_games/count))
+    put_scenario_log(str(count) + " / " + str(result))
+    put_scenario_log(str(cost) + " / " + str((result/cost)*100.0))
+
+
+btn_test_common_prize_log = Button(root, width=5, height=1, text="CP", command=cmd_btn_test_common_prize )
+btn_test_common_prize_log.place(x=550, y=80)
 
 prize_table = []
 
