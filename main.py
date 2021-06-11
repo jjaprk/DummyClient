@@ -289,8 +289,8 @@ def put_spin_log(log):
 url_entry = Entry(root, width=30)
 url_entry.place(x=10,y=10)
 # url_entry.insert(0,"http://titan-admin-eb-env.eba-yyfhid9w.ap-northeast-2.elasticbeanstalk.com")
-url_entry.insert(0,"http://127.0.0.1:8000")
-# url_entry.insert(0,"http://tit7080.com")
+# url_entry.insert(0,"http://127.0.0.1:8000")
+url_entry.insert(0,"http://tit7080.com")
 
 
 label_ID = Label(root, text="ID ")
