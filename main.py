@@ -446,9 +446,9 @@ def cmd_btn_test_prize_step():
 
 
 event_scenario_steps_game_count = {
-    'night': 5, 'turtle_1': 31, 'turtle_2': 62, 'turtle_3': 89,
-    'jellyfish_1': 40, 'jellyfish_2': 70, 'jellyfish_3': 108,
-    'shark': 70, 'whale_1': 41, 'whale_2': 94
+    'night': 5, 'turtle_1': 26, 'turtle_2': 50, 'turtle_3': 82,
+    'jellyfish_1': 36, 'jellyfish_2': 72, 'jellyfish_3': 106,
+    'shark': 25, 'whale_1': 42, 'whale_2': 95
 }
 
 
@@ -598,11 +598,11 @@ def build_event_scenario_step(target_prize, game_cost):
     for step in event_script_list:
         # skip turtles
         if step in ['turtle_1', 'turtle_2', 'turtle_3']:
-            if scenario_prize >= 500000 and random.randrange(0, 100) < 40:
+            if scenario_prize >= 500000 and random.randrange(0, 100) < 30:
                 continue
-            elif scenario_prize >= 300000 and random.randrange(0, 100) < 30:
+            elif scenario_prize >= 300000 and random.randrange(0, 100) < 20:
                 continue
-            elif scenario_prize >= 100000 and random.randrange(0, 100) < 20:
+            elif scenario_prize >= 100000 and random.randrange(0, 100) < 10:
                 continue
 
         scenario[str(offset)] = step
@@ -655,7 +655,7 @@ def build_prize_scenario(target_prize, game_cost, reel_event):
             prize_scenario[str(index)] = {item[1]: 0}
             index += 1
 
-        index += 5
+        index += 1
         prize_scenario[str(index)] = {'day': 0}
         prize_scenario['count'] = (index + 1)
         return prize_scenario
@@ -829,7 +829,7 @@ def cmd_btn_test_common_prize():
     result = 0
     count = 0
     cost = 0
-    num_games = 1000000
+    num_games = 10000000
 
     game_cost = int(gamecost_variable.get())
 
@@ -847,35 +847,35 @@ def cmd_btn_test_common_prize():
 
 
 btn_test_common_prize_log = Button(root, width=5, height=1, text="CP", command=cmd_btn_test_common_prize )
-btn_test_common_prize_log.place(x=550, y=80)
+btn_test_common_prize_log.place(x=550, y=130)
 
 prize_table = []
 
-for i in range(0, 10):
+for i in range(0, 100):
     prize_table.append(100)
-for i in range(0, 20):
+for i in range(0, 200):
     prize_table.append(200)
-for i in range(0, 40):
+for i in range(0, 500):
     prize_table.append(300)
-for i in range(0, 80):
+for i in range(0, 800):
     prize_table.append(500)
-for i in range(0, 150):
+for i in range(0, 500):
     prize_table.append(1000)
-for i in range(0, 120):
+for i in range(0, 400):
     prize_table.append(1500)
-for i in range(0, 90):
+for i in range(0, 300):
     prize_table.append(2000)
-for i in range(0, 60):
+for i in range(0, 150):
     prize_table.append(2500)
-for i in range(0, 30):
+for i in range(0, 120):
     prize_table.append(3000)
-for i in range(0, 15):
+for i in range(0, 80):
     prize_table.append(4000)
-for i in range(0, 8):
+for i in range(0, 40):
     prize_table.append(5000)
-for i in range(0, 5):
+for i in range(0, 10):
     prize_table.append(10000)
-for i in range(0, 2):
+for i in range(0, 5):
     prize_table.append(15000)
 # for i in range(0, 2):
 #     prize_table.append(20000)
@@ -888,7 +888,7 @@ def build_random_scenario(game_cost):
 
     prize = 0
 
-    if random.randrange(0, 1800) == 77:
+    if random.randrange(0, 1000) == 77:
         prize = random.choice(prize_table)
 
     return prize * game_cost
