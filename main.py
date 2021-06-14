@@ -861,21 +861,21 @@ for i in range(0, 800):
     prize_table.append(500)
 for i in range(0, 500):
     prize_table.append(1000)
-for i in range(0, 400):
+for i in range(0, 350):
     prize_table.append(1500)
-for i in range(0, 300):
+for i in range(0, 250):
     prize_table.append(2000)
-for i in range(0, 150):
-    prize_table.append(2500)
 for i in range(0, 120):
+    prize_table.append(2500)
+for i in range(0, 100):
     prize_table.append(3000)
-for i in range(0, 80):
+for i in range(0, 60):
     prize_table.append(4000)
 for i in range(0, 40):
     prize_table.append(5000)
-for i in range(0, 10):
+for i in range(0, 8):
     prize_table.append(10000)
-for i in range(0, 5):
+for i in range(0, 3):
     prize_table.append(15000)
 # for i in range(0, 2):
 #     prize_table.append(20000)
